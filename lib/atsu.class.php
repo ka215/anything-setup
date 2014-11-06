@@ -106,7 +106,7 @@ class AnythingSetUpper {
 		} else {
 			$this->options = $default_options;
 		}
-		if (in_array('plugin_version', $this->options)) {
+		if (array_key_exists('plugin_version', $this->options)) {
 			if ($this->options['plugin_version'] != $default_options['plugin_version']) {
 				if (version_compare($default_options['plugin_version'], $this->options['plugin_version']) > 0) {
 					if (!empty($this->options['options'])) {
