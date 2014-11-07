@@ -3,6 +3,8 @@ class AnythingSetUpperAdminOptions {
 	
 	var $plugin_info;
 	
+	var $plugin_current_options;
+	
 	var $plugin_options_schema;
 	
 	private static $instance;
@@ -23,7 +25,7 @@ class AnythingSetUpperAdminOptions {
 	protected function init() {
 		$atsu_options_schema = array(
 			// option_key	=>	[ 0:TYPE, 1:DEFAULT, 2:PLACEHOLDER|ITEMS_ARRAY, 3:VALIDATE_REGX|IS_MULTI, 4:LABEL, 5:HELPER_TEXT, 6:ENABLE, 7:EXTRA ]
-			'option_title' => [ 'string', 'sample', __('Please enter a option title', ATSU_PLUGIN_SLUG), '/^[a-z]{1}+[a-z0-9_\-]+?$/i', __('Setting option title', ATSU_PLUGIN_SLUG), __('In order to become a column name of the options table, you must be a unique name that does not same with other columns in using half-width alphanumeric and hyphen and underscore.', ATSU_PLUGIN_SLUG), true, 'require' ],
+			'option_title' => [ 'string', '', __('Please enter a option title', ATSU_PLUGIN_SLUG), '/^[a-z]{1}+[a-z0-9_\-]+?$/i', __('Setting option title', ATSU_PLUGIN_SLUG), __('In order to become a column name of the options table, you must be a unique name that does not same with other columns in using half-width alphanumeric and hyphen and underscore.', ATSU_PLUGIN_SLUG), true, 'require' ],
 			'field_name' => [ 'string', 'test', __('Please enter a field name', ATSU_PLUGIN_SLUG), '/^[a-z]{1}+[a-z0-9_\-]+?$/i', __('Field name', ATSU_PLUGIN_SLUG), __('In order to become a system name of the setting, you must be a unique name that does not same with other settings in using half-width alphanumeric and hyphen and underscore.', ATSU_PLUGIN_SLUG), true, 'require' ],
 			'field_order' => [ 'integer', 0, __('Please enter a field order', ATSU_PLUGIN_SLUG), '/^\d{,3}/', __('Field order', ATSU_PLUGIN_SLUG), __('I will be in the order of from the top of this setting item.', ATSU_PLUGIN_SLUG), true, ],
 			'field_type' => [ 'select', 0, [
@@ -53,8 +55,7 @@ class AnythingSetUpperAdminOptions {
 		$this->plugin_options_schema = $atsu_options_schema;
 		
 		$this->plugin_info = get_plugin_data(ATSU_PLUGIN_DIR .'/'. ATSU_PLUGIN_SLUG . '.php', false, false);
-		//add_action('admin_menu', array())
-		//add_action('admin_init', array($this, 'options_setting_action'));
+		$this->plugin_current_options = get_option(ATSU_PLUGIN_SLUG, []);
 		$this->options_setting_action();
 		$this->render_setting_options_page();
 	}
@@ -79,7 +80,7 @@ class AnythingSetUpperAdminOptions {
     </div>
 <?php
 		// var_dump for debug
-		var_dump(get_option(ATSU_PLUGIN_SLUG, []));
+		var_dump($this->plugin_current_options);
 	}
 	
 	private function render_setting_options_page() {
@@ -96,31 +97,46 @@ class AnythingSetUpperAdminOptions {
 			$tab_contents .= sprintf('<a class="%s" href="?page=%s&mode=%s">%s</a>', implode(' ', $classes), ATSU_PLUGIN_SLUG, $tab_mode, $tab_name);
 		}
 		$tab_contents .= '</h3>';
-		$form_components = '';
+		$main_components = '';
 		switch ($current_mode) {
 			case 'list': 
+				$table_class = 'table border-table';
 				$action = 'add';
-				$buttons_html = get_submit_button( __('Add options set', ATSU_PLUGIN_SLUG) );
-				$buttons_html .= get_submit_button( __('Delete options set', ATSU_PLUGIN_SLUG), 'delete secondary' );
+				$buttons_html = '';
+				
+				$main_components .= sprintf('<thead><tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead>', __('Option Name', ATSU_PLUGIN_SLUG), __('Option Items', ATSU_PLUGIN_SLUG), __('Edit Detail', ATSU_PLUGIN_SLUG), __('Delete Options', ATSU_PLUGIN_SLUG));
+				$main_components .= '<tbody>';
+				foreach ($this->plugin_current_options['options'] as $option_name => $option_schema) {
+					$main_components .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>', $option_name, count($option_schema), get_submit_button( __('Edit options', ATSU_PLUGIN_SLUG), 'secondary small', 'submit', false, array('id'=>'atsu-edit-' . $option_name, 'data-option-name'=>$option_name) ), get_submit_button( __('Delete options', ATSU_PLUGIN_SLUG), 'delete small', 'delete', true, array('data-option-name'=>$option_name) ));
+				}
+				
+				$main_components .= sprintf('<tr><td>%s</td><td colspan="3">%s</td></tr>', $this->render_component_form_element('option_title', $this->plugin_options_schema['option_title'], array(), false), get_submit_button( __('Add new option', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'atsu-add-new')) );
+				$main_components .= '</tbody>';
 				
 				break;
 			case 'detail': 
-				$option_title = 'sample';
-				$options_schema = $this->plugin_options_schema;
-				$atsu_options = get_option(ATSU_PLUGIN_SLUG, []);
-				if (isset($option_title) && !empty($option_title) && array_key_exists($option_title, $atsu_options['options'])) {
-					$current_options = $atsu_options['options'][$option_title];
-					$action = 'update';
-					$buttons_html = get_submit_button( __('Update options', ATSU_PLUGIN_SLUG) );
-					
+				$table_class = 'form-table';
+				unset($this->plugin_options_schema['option_title']);
+				$option_title = isset($_REQUEST['optnm']) && !empty($_REQUEST['optnm']) ? $_REQUEST['optnm'] : '';
+				if (!empty($option_title) && array_key_exists($option_title, $this->plugin_current_options['options'])) {
+					if (isset($option_title) && !empty($option_title)) {
+						$current_options = $this->plugin_current_options['options'][$option_title];
+						$action = 'update';
+						$buttons_html = get_submit_button( __('Update options', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'update') );
+						
+					} else {
+						$current_options = array();
+						$action = 'regist';
+						$buttons_html = get_submit_button( __('Regist options', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'regist') );
+					}
+					$buttons_html .= get_submit_button( __('Reset options', ATSU_PLUGIN_SLUG), 'delete large', 'submit', false, array('id'=>'reset') );
+					foreach ($this->plugin_options_schema as $option_name => $schema) {
+						$main_components .= $this->render_component_form_element($option_name, $schema, $current_options);
+					}
 				} else {
-					$current_options = array();
-					$action = 'regist';
-					$buttons_html = get_submit_button( __('Regist options', ATSU_PLUGIN_SLUG) );
-				}
-				$buttons_html .= get_submit_button( __('Reset options', ATSU_PLUGIN_SLUG), 'secondary', 'reset' );
-				foreach ($options_schema as $option_name => $schema) {
-					$form_components .= $this->render_component_form_element($option_name, $schema, $current_options);
+					global $atsu_message;
+					$atsu_message = [ 'error', __('Option name to edit the details have not been specified.', ATSU_PLUGIN_SLUG) ];
+					$buttons_html = '';
 				}
 				break;
 		}
@@ -131,9 +147,9 @@ class AnythingSetUpperAdminOptions {
     <?php $this->admin_notice(); ?>
     <form method="post" action="">
       <input type="hidden" name="action" value="<?php echo $action; ?>">
-      <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce(ATSU_PLUGIN_SLUG . '_save', '_wpnonce'); ?>">
-      <table class="form-table">
-        <?php echo $form_components; ?>
+      <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce(ATSU_PLUGIN_SLUG .'_'. $action, '_wpnonce'); ?>">
+      <table class="<?php echo $table_class; ?>">
+        <?php echo $main_components; ?>
       </table>
       <?php echo $buttons_html; ?>
     </form>
@@ -141,9 +157,15 @@ class AnythingSetUpperAdminOptions {
 <?php
 	}
 	
-	private function render_component_form_element($option_name, $schema, $current_options) {
+	private function render_component_form_element($option_name, $schema, $current_options, $is_wrapper=true) {
+		if (!isset($schema) || is_null($schema) || empty($schema) || !is_array($schema)) 
+			return;
 		$form_elements = '';
-		$form_elements_template = "\t<tr valign=\"top\"><th scope=\"row\">%s</th>\n\t\t<td>\n\t\t\t<fieldset>\n\t\t\t\t<legend class=\"screen-reader-text\"><span>%s</span></legend>\n\t\t\t\t%s\n\t\t\t\t<p class=\"description\">%s</p>\n\t\t\t</fieldset>\n\t\t</td>\n\t</tr>\n";
+		if ($is_wrapper) {
+			$form_elements_template = "\t<tr valign=\"top\"><th scope=\"row\">%s</th>\n\t\t<td>\n\t\t\t<fieldset>\n\t\t\t\t<legend class=\"screen-reader-text\"><span>%s</span></legend>\n\t\t\t\t%s\n\t\t\t\t<p class=\"description\">%s</p>\n\t\t\t</fieldset>\n\t\t</td>\n\t</tr>\n";
+		} else {
+			$form_elements_template = "<div data-helper-text=\"%s\">%s</div>\n";
+		}
 		$component_type = $schema[0];
 		$label_text = $schema[4];
 		$description_text = $schema[5];
@@ -283,7 +305,11 @@ class AnythingSetUpperAdminOptions {
 				break;
 		}
 		if (!empty($html_instance)) {
-			$form_elements .= sprintf($form_elements_template, $label_text, $label_text, $html_instance, $description_text);
+			if ($is_wrapper) {
+				$form_elements .= sprintf($form_elements_template, $label_text, $label_text, $html_instance, $description_text);
+			} else {
+				$form_elements .= sprintf($form_elements_template, $description_text, $html_instance);
+			}
 		}
 		return $form_elements;
 	}
@@ -298,88 +324,120 @@ class AnythingSetUpperAdminOptions {
 		if (!wp_verify_nonce($_POST['_wpnonce'], ATSU_PLUGIN_SLUG . '_' . $_POST['action'])) {
 			return;
 		}
-		$options_schema = $this->plugin_options_schema;
-		$atsu_options = get_option(ATSU_PLUGIN_SLUG, []);
-//var_dump($atsu_options);
-		$options_list = $atsu_options['options'];
+		global $atsu_message;
+		$options_list = $this->plugin_current_options['options'];
 //var_dump($options_list);
 		$set_options = $_POST['atsu_setting_options'];
 //var_dump($set_options);
-		$mode = (isset($_POST['submit']) && !empty($_POST['submit'])) ? 'update' : 'reset';
-//var_dump($mode);
+		$mode = (isset($_POST['submit']) && !empty($_POST['submit'])) ? $_POST['action'] : '';
+		$status = array();
+		$store_options = array();
 		
-		// updated after options value validate
-		if ($mode == 'update') {
-			$status = array();
-			$store_options = array();
-			foreach ($set_options as $option_name => $option_value) {
-				if (!array_key_exists($option_name, $options_schema)) 
-					continue;
-				$is_require = (isset($options_schema[$option_name][7]) && !empty($options_schema[$option_name][7]) && $options_schema[$option_name][7] == 'require') ? true : false;
-				if ($is_require && empty($option_value)) {
-					$status[] = sprintf(__('<strong>%s</strong> is empty data! This item must be sure to enter.', ATSU_PLUGIN_SLUG), $options_schema[$option_name][4]);
+		switch($mode) { // updated after options value validate
+			case 'add': 
+				foreach ($set_options as $option_name => $option_value) {
+					list($message, $fixed_value) = $this->validate_option_values($option_name, $option_value);
+					$store_options[$option_name] = $fixed_value;
+					if (!empty($message)) 
+						$status[] = $message;
 				}
-				$data_type = $options_schema[$option_name][0];
-				if ($data_type == 'boolean') {
-					$fixed_value = $option_value == 'true' ? true : false;
-				}
-				if ($data_type == 'string') {
-					$regx = $options_schema[$option_name][3];
-					if (!empty($option_value) && !empty($regx)) {
-						if (!preg_match($regx, $option_value)) {
-							$status[] = sprintf(__('<strong>%s</strong> is invalid data!', ATSU_PLUGIN_SLUG), $options_schema[$option_name][4]);
-						}
-					}
-					$fixed_value = $option_value;
-				}
-				if ($data_type == 'integer') {
-					$fixed_value = intval($option_value);
-				}
-				if ($data_type == 'password') {
-					$fixed_value = ms_do_encrypt($option_value, 'encrypt');
-				}
-				if ($data_type == 'select') {
-					$box_type = $options_schema[$option_name][3];
-					if ($box_type == 'single') {
-						$fixed_value = $option_value;
-					} else {
-						$fixed_value = implode(',', $option_value);
-					}
-				}
-				if ($data_type == 'radio') {
-					$fixed_value = $option_value;
-				}
-				if ($data_type == 'check') {
-					$fixed_value = implode(',', $option_value);
-				}
-				$store_options[$option_name] = $fixed_value;
-			}
-			
-			// save or error
-			global $atsu_message;
-			if (empty($status)) {
-				if (array_key_exists('option_title', $store_options)) {
-					$current_option_name = $store_options['option_title'];
-					unset($store_options['option_title']);
-					if (array_key_exists($current_option_name, $options_list)) {
-						$atsu_message = [ 'updated', sprintf(__('The options of <strong>%s</strong> have updated.', ATSU_PLUGIN_SLUG), $current_option_name) ];
-					} else {
-						//$options_list[] = $store_options;
-						$atsu_message = [ 'updated', sprintf(__('The options of <strong>%s</strong> added new.', ATSU_PLUGIN_SLUG), $current_option_name) ];
-					}
-					$options_list[$current_option_name] = $store_options;
-					$atsu_options['options'] = $options_list;
-					update_option(ATSU_PLUGIN_SLUG, $atsu_options);
+				if (array_key_exists($store_options['option_title'], $options_list)) 
+					$status[] = __('The option name can not be added because it already exists.', ATSU_PLUGIN_SLUG);
+				
+				// save or error
+				if (empty($status)) {
+					$options_list[$store_options['option_title']] = array();
+					$this->plugin_current_options['options'] = $options_list;
+					update_option(ATSU_PLUGIN_SLUG, $this->plugin_current_options);
+					$atsu_message = [ 'updated', sprintf(__('The options of <strong>%s</strong> added new.', ATSU_PLUGIN_SLUG), $store_options['option_title']) ];
 				} else {
-					$atsu_message = [ 'error', __('The option settings to save was none.', ATSU_PLUGIN_SLUG) ];
+					$atsu_message = [ 'error', implode("<br>\n", $status) ];
 				}
-			} else {
-				$atsu_message = [ 'error', implode("<br>\n", $status) ];
-			}
-		} elseif ($mode == 'reset') {
-			delete_option(ATSU_PLUGIN_SLUG);
+				break;
+			case 'update': 
+				foreach ($set_options as $option_name => $option_value) {
+					list($status[], $fixed_value) = $this->validate_option_values($option_name, $option_value);
+					$store_options[$option_name] = $fixed_value;
+				}
+				
+				// save or error
+				if (empty($status)) {
+					if (array_key_exists('option_title', $store_options)) {
+						$current_option_name = $store_options['option_title'];
+						unset($store_options['option_title']);
+						if (array_key_exists($current_option_name, $options_list)) {
+							$atsu_message = [ 'updated', sprintf(__('The options of <strong>%s</strong> have updated.', ATSU_PLUGIN_SLUG), $current_option_name) ];
+						} else {
+							//$options_list[] = $store_options;
+							$atsu_message = [ 'updated', sprintf(__('The options of <strong>%s</strong> added new.', ATSU_PLUGIN_SLUG), $current_option_name) ];
+						}
+						$options_list[$current_option_name] = $store_options;
+						$this->plugin_current_options['options'] = $options_list;
+						update_option(ATSU_PLUGIN_SLUG, $this->plugin_current_options);
+					} else {
+						$atsu_message = [ 'error', __('The option settings to save was none.', ATSU_PLUGIN_SLUG) ];
+					}
+				} else {
+					$atsu_message = [ 'error', implode("<br>\n", $status) ];
+				}
+				break;
+			case 'reset': 
+				delete_option(ATSU_PLUGIN_SLUG);
+				break;
+			default: 
+				return;
+				break;
 		}
 		
 	}
-
+	
+	private function validate_option_values($option_name, $option_value, $options_schema=null) {
+		if (empty($options_schema)) 
+			$options_schema=$this->plugin_options_schema;
+		$message = '';
+		$fixed_value = '';
+		if (!array_key_exists($option_name, $options_schema)) 
+			continue;
+		$is_require = (isset($options_schema[$option_name][7]) && !empty($options_schema[$option_name][7]) && $options_schema[$option_name][7] == 'require') ? true : false;
+		if ($is_require && empty($option_value)) {
+			$message = sprintf(__('<strong>%s</strong> is empty data! This item must be sure to enter.', ATSU_PLUGIN_SLUG), $options_schema[$option_name][4]);
+		}
+		if (empty($message)) {
+			$data_type = $options_schema[$option_name][0];
+			if ($data_type == 'boolean') {
+				$fixed_value = $option_value == 'true' ? true : false;
+			}
+			if ($data_type == 'string') {
+				$regx = $options_schema[$option_name][3];
+				if (!empty($option_value) && !empty($regx)) {
+					if (!preg_match($regx, $option_value)) {
+						$message = sprintf(__('<strong>%s</strong> is invalid data!', ATSU_PLUGIN_SLUG), $options_schema[$option_name][4]);
+					}
+				}
+				$fixed_value = $option_value;
+			}
+			if ($data_type == 'integer') {
+				$fixed_value = intval($option_value);
+			}
+			if ($data_type == 'password') {
+				$fixed_value = ms_do_encrypt($option_value, 'encrypt');
+			}
+			if ($data_type == 'select') {
+				$box_type = $options_schema[$option_name][3];
+				if ($box_type == 'single') {
+					$fixed_value = $option_value;
+				} else {
+					$fixed_value = implode(',', $option_value);
+				}
+			}
+			if ($data_type == 'radio') {
+				$fixed_value = $option_value;
+			}
+			if ($data_type == 'check') {
+				$fixed_value = implode(',', $option_value);
+			}
+		}
+		return array($message, $fixed_value);
+	}
+	
 }
