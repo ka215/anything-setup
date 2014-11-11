@@ -162,7 +162,7 @@ class AnythingSetUpper {
 		$atsu_plugin_page = add_options_page(__('Anything Set Upper Option: ', self::DOMAIN), __('Anything Set Upper', self::DOMAIN), 'manage_options', self::DOMAIN, array($this, 'admin_controller'), plugin_dir_url(__FILE__) . 'assets/img/undo.png');
 		wp_parse_str($_SERVER['QUERY_STRING'], $this->query);
 		add_action("admin_head-$atsu_plugin_page", array($this, 'admin_header'));
-		add_action("load-$atsu_plugin_page", array($this, 'admin_assets'));
+		add_action("admin_enqueue_scripts", array($this, 'admin_assets'));
 		add_action("admin_footer-$atsu_plugin_page", array($this, 'admin_footer'));
 		add_action('admin_notice', array($this, 'admin_notice'));
 	}
@@ -197,17 +197,16 @@ class AnythingSetUpper {
 		if (array_key_exists('page', $this->query) && $this->query['page'] == self::DOMAIN) {
 			$cdbt_admin_assets = array(
 				'styles' => array(
-//					'cdbt-common-style' => array( $this->dir_url . '/assets/css/cdbt-main.min.css', array(), $this->version, 'all' ), 
-//					'cdbt-admin-style' => array( $this->dir_url . '/assets/css/cdbt-admin.css', true, $this->version, 'all' ), 
+					'atsu-admin-style' => array( $this->dir_url . '/assets/atsu-style.css', true, $this->version, 'all' ), 
 				), 
 				'scripts' => array(
-//					'cdbt-common-script' => array( $this->dir_url . '/assets/js/scripts.min.js', array(), null, false ), 
-					'jquery-ui-core' => null, 
-					'jquery-ui-widget' => null, 
-					'jquery-ui-mouse' => null, 
-					'jquery-ui-position' => null, 
-					'jquery-ui-sortable' => null, 
-					'jquery-ui-autocomplete' => null, 
+//					'jquery-ui-core' => null, 
+//					'jquery-ui-widget' => null, 
+//					'jquery-ui-mouse' => null, 
+//					'jquery-ui-position' => null, 
+//					'jquery-ui-sortable' => null, 
+//					'jquery-ui-autocomplete' => null, 
+					'atsu-admin-script' => array( $this->dir_url . '/assets/atsu-script.js', array(), null, false ), 
 				)
 			);
 			foreach ($cdbt_admin_assets as $asset_type => $asset_instance) {
