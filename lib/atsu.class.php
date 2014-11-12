@@ -200,12 +200,14 @@ class AnythingSetUpper {
 					'atsu-admin-style' => array( $this->dir_url . '/assets/atsu-style.css', true, $this->version, 'all' ), 
 				), 
 				'scripts' => array(
-//					'jquery-ui-core' => null, 
+					'jquery-ui-core' => null, 
+					'jquery-ui-accordion' => null, 
 //					'jquery-ui-widget' => null, 
 //					'jquery-ui-mouse' => null, 
 //					'jquery-ui-position' => null, 
 //					'jquery-ui-sortable' => null, 
 //					'jquery-ui-autocomplete' => null, 
+					'jquery-ui-tooltip' => null, 
 					'atsu-admin-script' => array( $this->dir_url . '/assets/atsu-script.js', array(), null, false ), 
 				)
 			);

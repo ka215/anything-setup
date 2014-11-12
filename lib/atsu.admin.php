@@ -97,28 +97,39 @@ class AnythingSetUpperAdminOptions {
 			$tab_contents .= sprintf('<a class="%s" href="?page=%s&mode=%s">%s</a>', implode(' ', $classes), ATSU_PLUGIN_SLUG, $tab_mode, $tab_name);
 		}
 		$tab_contents .= '</h3>';
-		$table_contents = '';
-		$after_table_contents = '';
+		$before_main_contents = '';
+		$main_contents = '';
+		$after_main_contents = '';
 		switch ($current_mode) {
 			case 'list': 
-				$table_class = 'table table-bordered table-hover';
+				$main_tag = 'table';
+				$parent_class = 'table table-bordered table-hover';
 				$action = 'add';
 				$buttons_html = '';
 				
-				$table_contents .= sprintf('<thead><tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead>', __('Option Name', ATSU_PLUGIN_SLUG), __('Option Items', ATSU_PLUGIN_SLUG), __('Edit Detail', ATSU_PLUGIN_SLUG), __('Delete Options', ATSU_PLUGIN_SLUG));
-				$table_contents .= '<tbody>';
+				$main_contents .= sprintf('<thead><tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead>', __('Option Name', ATSU_PLUGIN_SLUG), __('Option Items', ATSU_PLUGIN_SLUG), __('Edit Detail', ATSU_PLUGIN_SLUG), __('Delete Options', ATSU_PLUGIN_SLUG));
+				$main_contents .= '<tbody>';
 				foreach ($this->plugin_current_options['options'] as $option_name => $option_schema) {
-					$table_contents .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>', $option_name, count($option_schema), get_submit_button( __('Edit options', ATSU_PLUGIN_SLUG), 'secondary small', 'submit', false, array('id'=>'atsu-edit-' . $option_name, 'data-option-name'=>$option_name) ), get_submit_button( __('Delete options', ATSU_PLUGIN_SLUG), 'secondary small', 'submit', false, array('id'=>'atsu-delete-' . $option_name, 'data-option-name'=>$option_name) ));
+					$main_contents .= sprintf('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>', $option_name, count($option_schema), get_submit_button( __('Edit options', ATSU_PLUGIN_SLUG), 'secondary small', 'submit', false, array('id'=>'atsu-edit-' . $option_name, 'data-option-name'=>$option_name) ), get_submit_button( __('Delete options', ATSU_PLUGIN_SLUG), 'secondary small', 'submit', false, array('id'=>'atsu-delete-' . $option_name, 'data-option-name'=>$option_name) ));
 				}
-				$table_contents .= '</tbody>';
-				$after_table_contents .= sprintf('<div class="brick-controller">%s %s</div>', $this->render_component_form_element('option_title', $this->plugin_options_schema['option_title'], array(), false), get_submit_button( __('Add new option', ATSU_PLUGIN_SLUG), 'primary large pull-left', 'submit', false, array('id'=>'atsu-add-new')) );
+				$main_contents .= '</tbody>';
+				$after_main_contents .= sprintf('<div class="brick-controller">%s %s</div>', $this->render_component_form_element('option_title', $this->plugin_options_schema['option_title'], array(), false), get_submit_button( __('Add new option', ATSU_PLUGIN_SLUG), 'primary large pull-left', 'submit', false, array('id'=>'atsu-add-new')) );
 				
 				break;
 			case 'configure': 
-				$table_class = 'form-table';
+				$main_tag = 'ul';
+				$parent_class = 'configure-items';
 				unset($this->plugin_options_schema['option_title']);
 				$option_title = isset($_REQUEST['optnm']) && !empty($_REQUEST['optnm']) ? $_REQUEST['optnm'] : '';
 				if (!empty($option_title) && array_key_exists($option_title, $this->plugin_current_options['options'])) {
+//					$main_contents .= '<caption>'. __('Option Name', ATSU_PLUGIN_SLUG) .': <strong>'. $option_title .'</strong> '. __('configuration items editing', ATSU_PLUGIN_SLUG) .'</caption>';
+					$before_main_contents .= "<div id=\"atsu-collapse\">\n";
+					$before_main_contents .= '<h4>'. __('Verifying Setting Page (preview)', ATSU_PLUGIN_SLUG) ."<strong class=\"highlight\"></strong></h4>\n";
+					$before_main_contents .= "<div id=\"collapse-VSP\"></div>\n";
+					$before_main_contents .= '<h4>'. __('Preview Option Item Component', ATSU_PLUGIN_SLUG) ."<strong class=\"highlight\"></strong></h4>\n";
+					$before_main_contents .= "<div id=\"collapse-POIC\"></div>\n";
+					$before_main_contents .= '<h4>'. __('Option Name', ATSU_PLUGIN_SLUG) .': <strong class="highlight">'. $option_title .'</strong> '. __('configuration items editing', ATSU_PLUGIN_SLUG) ."</h4>\n";
+					$before_main_contents .= "<div id=\"collapse-CIE\">\n";
 					if (isset($option_title) && !empty($option_title)) {
 						$current_options = $this->plugin_current_options['options'][$option_title];
 						$action = 'update';
@@ -130,9 +141,17 @@ class AnythingSetUpperAdminOptions {
 						$buttons_html = get_submit_button( __('Regist options', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'regist') );
 					}
 					$buttons_html .= get_submit_button( __('Reset options', ATSU_PLUGIN_SLUG), 'delete large', 'submit', false, array('id'=>'reset') );
+//					$cols = 1;
 					foreach ($this->plugin_options_schema as $option_name => $schema) {
-						$table_contents .= $this->render_component_form_element($option_name, $schema, $current_options);
+//						$main_contents .= $cols%2 == 1 ? "<tr>\n" : '';
+						$main_contents .= $this->render_component_form_element($option_name, $schema, $current_options, 'list', 'nolabel');
+//						$main_contents .= $cols%2 == 0 ? "</tr>\n" : '';
+//						$cols++;
 					}
+//					$main_contents .= $cols%2 == 0 ? "<td colspan=\"2\"></td>\n</tr>\n" : '';
+					$after_main_contents .= '<div class="button-brick">'. $buttons_html ."</div>\n";
+					$after_main_contents .= "</div>\n</div>\n";
+					$buttons_html = '';
 				} else {
 					global $atsu_message;
 					$atsu_message = [ 'error', __('Option name to edit the details have not been specified.', ATSU_PLUGIN_SLUG) ];
@@ -148,23 +167,29 @@ class AnythingSetUpperAdminOptions {
     <form method="post" action="" id="atsu-admin-form">
       <input type="hidden" name="action" value="<?php echo $action; ?>">
       <input type="hidden" name="option_name" value="">
+      <input type="hidden" name="option_schema" value="">
       <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce(ATSU_PLUGIN_SLUG .'_submit', '_wpnonce'); ?>">
-      <table class="<?php echo $table_class; ?>">
-        <?php echo $table_contents; ?>
-      </table>
-      <?php echo $after_table_contents; ?>
+      <?php echo $before_main_contents; ?>
+      <<?php echo $main_tag; ?> class="<?php echo $parent_class; ?>">
+        <?php echo $main_contents; ?>
+      </<?php echo $main_tag; ?>>
+      <?php echo $after_main_contents; ?>
       <?php echo $buttons_html; ?>
     </form>
   </div>
 <?php
 	}
 	
-	private function render_component_form_element($option_name, $schema, $current_options, $is_wrapper=true) {
+	private function render_component_form_element($option_name, $schema, $current_options, $wrapper='table', $extend=null) {
 		if (!isset($schema) || is_null($schema) || empty($schema) || !is_array($schema)) 
 			return;
 		$form_elements = '';
-		if ($is_wrapper) {
-			$form_elements_template = "\t<tr valign=\"top\"><th scope=\"row\">%s</th>\n\t\t<td>\n\t\t\t<fieldset>\n\t\t\t\t<legend class=\"screen-reader-text\"><span>%s</span></legend>\n\t\t\t\t%s\n\t\t\t\t<p class=\"description\">%s</p>\n\t\t\t</fieldset>\n\t\t</td>\n\t</tr>\n";
+		if ($wrapper == 'table') {
+			$form_elements_template = $extend == 'colspan' ? "<tr valign=\"top\">\n" : '';
+			$form_elements_template .= "<th scope=\"row\">%s</th>\n<td>\n<fieldset>\n<legend class=\"screen-reader-text\"><span>%s</span></legend>\n%s\n<p class=\"description\">%s</p>\n</fieldset>\n</td>\n";
+			$form_elements_template .= $extend == 'colspan' ? "</tr>\n" : '';
+		} elseif ($wrapper == 'list') {
+			$form_elements_template = "<li><label for=\"%s\">%s</label>\n<div>%s <div class=\"baloon_box hide-content\">%s</div></div>\n</li>\n";
 		} else {
 			$form_elements_template = "<div>%s <p class=\"helper-text\">%s</p></div>\n";
 		}
@@ -172,7 +197,15 @@ class AnythingSetUpperAdminOptions {
 		$label_text = $schema[4];
 		$description_text = $schema[5];
 		$enabled = isset($schema[6]) && !empty($schema[6]) && $schema[6] == 'false' ? false : true;
-		$extra = isset($schema[7]) && !empty($schema[7]) ? $schema[7] : '';
+		$extra = isset($schema[7]) && !empty($schema[7]) ? explode(',', $schema[7]) : array();
+		$is_require = false;
+		foreach($extra as $i => $val) {
+			if ($val == 'require') {
+				$is_require = true;
+				unset($extra[$i]);
+				break;
+			}
+		}
 		$html_instance = '';
 		switch ($component_type) {
 			case 'boolean': 
@@ -234,7 +267,16 @@ class AnythingSetUpperAdminOptions {
 					$maxlength = !empty($strlen_ary[$values-1]) ? intval($strlen_ary[$values-1]) : intval($strlen_ary[0]);
 					$form_size += $maxlength > $form_size ? $maxlength : $form_size;
 				}
-				$add_unit = !empty($extra) ? '<sub class="unit">'. $extra .'</sub>' : '';
+				$add_unit = '';
+				if (!empty($extra)) {
+					foreach($extra as $i => $val) {
+						if (preg_match('/^unit\:(.*)/U', $val, $matches)) {
+							$add_unit = '<sub class="unit">'. $matches[1] .'</sub>';
+							unset($extra[$i]);
+							break;
+						}
+					}
+				}
 				$html_instance = '<input name="atsu_setting_options['. $option_name .']" id="'. $option_name .'" type="number" size="'. $form_size .'" style="width: '. $form_size .'em;" value="'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $default_value) .'">' . $add_unit;
 				break;
 			case 'select': 
@@ -312,8 +354,10 @@ class AnythingSetUpperAdminOptions {
 				break;
 		}
 		if (!empty($html_instance)) {
-			if ($is_wrapper) {
+			if ($wrapper == 'table') {
 				$form_elements .= sprintf($form_elements_template, $label_text, $label_text, $html_instance, $description_text);
+			} elseif ($wrapper == 'list') {
+				$form_elements .= sprintf($form_elements_template, $option_name, $label_text, $html_instance, $description_text);
 			} else {
 				$form_elements .= sprintf($form_elements_template, $html_instance, $description_text);
 			}
