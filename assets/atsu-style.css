@@ -82,12 +82,13 @@ th {
 	display: none;
 }
 
-.ui-accordion {
+.accordion-list {
 	margin-bottom: 20px;
 	border-radius: 4px;
 }
 
-.ui-accordion-header {
+.accordion-toggle {
+	position: relative;
 	margin-bottom: 0;
 	padding: 15px 15px;
 	border: 1px solid #d0d0d0;
@@ -98,7 +99,15 @@ th {
 	background-color: #e8e8e8;
 }
 
-.ui-accordion-content {
+.accordion-icon {
+	display: inline-block;
+}
+
+.accordion-toggle[data-toggle='disabled'] .accordion-icon {
+	color: #cccccc;
+}
+
+.accordion-content {
 	padding: 10px 30px 15px;
 	border: 1px solid #d0d0d0;
 	border-top: 0;
@@ -106,6 +115,10 @@ th {
 	border-bottom-left-radius: 4px;
 	color: #202020;
 	background-color: #f8f8f8;
+}
+
+.table-poic th {
+	background-color: transparent;
 }
 
 .baloon_box {

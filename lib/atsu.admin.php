@@ -50,7 +50,7 @@ class AnythingSetUpperAdminOptions {
 			'helper_text' => [ 'string', '', __('Please enter a description as help', ATSU_PLUGIN_SLUG), null, __('Description as help', ATSU_PLUGIN_SLUG), __('Designation of the placeholder text is optional.', ATSU_PLUGIN_SLUG), true, ],
 			'enable_field' => [ 'boolean', true, null, null, __('Enabling input field', ATSU_PLUGIN_SLUG), __('It does not output as a hidden field if you disable the input field.', ATSU_PLUGIN_SLUG), true, 'require' ],
 			'unit' => [ 'string', '', __('Please enter a unit', ATSU_PLUGIN_SLUG), null, __('Unit name', ATSU_PLUGIN_SLUG), __('It is additionally displayed as a suffix of the input field, such as unit.', ATSU_PLUGIN_SLUG), true, ],
-			'extra' => [ 'string', '', __('Please enter a extra setting', ATSU_PLUGIN_SLUG), null, __('Extra setting', ATSU_PLUGIN_SLUG), __('Designation of the placeholder text is optional.', ATSU_PLUGIN_SLUG), true, ],
+			'extra' => [ 'check', 0, [ 'require'=>__('Require', ATSU_PLUGIN_SLUG), 'encrypt'=>__('Encrypt', ATSU_PLUGIN_SLUG) ], 'multi', __('Extra setting', ATSU_PLUGIN_SLUG), __('Please choose items.', ATSU_PLUGIN_SLUG), true, ],
 		);
 		$this->plugin_options_schema = $atsu_options_schema;
 		
@@ -123,13 +123,13 @@ class AnythingSetUpperAdminOptions {
 				$option_title = isset($_REQUEST['optnm']) && !empty($_REQUEST['optnm']) ? $_REQUEST['optnm'] : '';
 				if (!empty($option_title) && array_key_exists($option_title, $this->plugin_current_options['options'])) {
 //					$main_contents .= '<caption>'. __('Option Name', ATSU_PLUGIN_SLUG) .': <strong>'. $option_title .'</strong> '. __('configuration items editing', ATSU_PLUGIN_SLUG) .'</caption>';
-					$before_main_contents .= "<div id=\"atsu-collapse\">\n";
-					$before_main_contents .= '<h4>'. __('Verifying Setting Page (preview)', ATSU_PLUGIN_SLUG) ."<strong class=\"highlight\"></strong></h4>\n";
-					$before_main_contents .= "<div id=\"collapse-VSP\"></div>\n";
-					$before_main_contents .= '<h4>'. __('Preview Option Item Component', ATSU_PLUGIN_SLUG) ."<strong class=\"highlight\"></strong></h4>\n";
-					$before_main_contents .= "<div id=\"collapse-POIC\"></div>\n";
-					$before_main_contents .= '<h4>'. __('Option Name', ATSU_PLUGIN_SLUG) .': <strong class="highlight">'. $option_title .'</strong> '. __('configuration items editing', ATSU_PLUGIN_SLUG) ."</h4>\n";
-					$before_main_contents .= "<div id=\"collapse-CIE\">\n";
+					$before_main_contents .= "<div id=\"atsu-collapse\" class=\"accordion-list\">\n";
+					$before_main_contents .= '<h4 id="atsu-vsp-head" class="accordion-toggle"><div class="accordion-icon"><span class="dashicons dashicons-arrow-right-alt2"></span></div> '. __('Verifying Setting Page (preview)', ATSU_PLUGIN_SLUG) ."<strong class=\"highlight\"></strong></h4>\n";
+					$before_main_contents .= "<div id=\"atsu-vsp-body\" class=\"accordion-content\"></div>\n";
+					$before_main_contents .= '<h4 id="atsu-poic-head" class="accordion-toggle"><div class="accordion-icon"><span class="dashicons dashicons-arrow-right-alt2"></span></div> '. __('Preview Option Item Component', ATSU_PLUGIN_SLUG) ."<strong class=\"highlight\"></strong></h4>\n";
+					$before_main_contents .= "<div id=\"atsu-poic-body\" class=\"accordion-content\"></div>\n";
+					$before_main_contents .= '<h4 id="atsu-cie-head" class="accordion-toggle"><div class="accordion-icon"><span class="dashicons dashicons-arrow-right-alt2"></span></div> '. __('Option Name', ATSU_PLUGIN_SLUG) .': <strong class="highlight">'. $option_title .'</strong> '. __('configuration items editing', ATSU_PLUGIN_SLUG) ."</h4>\n";
+					$before_main_contents .= "<div id=\"atsu-cie-body\" class=\"accordion-content\">\n";
 					if (isset($option_title) && !empty($option_title)) {
 						$current_options = $this->plugin_current_options['options'][$option_title];
 						$action = 'update';
@@ -193,6 +193,7 @@ class AnythingSetUpperAdminOptions {
 		} else {
 			$form_elements_template = "<div>%s <p class=\"helper-text\">%s</p></div>\n";
 		}
+		$post_array_name = 'atsu_setting_options';
 		$component_type = $schema[0];
 		$label_text = $schema[4];
 		$description_text = $schema[5];
@@ -209,7 +210,7 @@ class AnythingSetUpperAdminOptions {
 		$html_instance = '';
 		switch ($component_type) {
 			case 'boolean': 
-				$html_instance = '<select name="atsu_setting_options['. $option_name .']" id="'. $option_name .'">';
+				$html_instance = '<select name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'">';
 				$html_instance .= '<option '. (array_key_exists($option_name, $current_options) ? selected($current_options[$option_name], true, false) : '') .' value="true">'. __('Yes', ATSU_PLUGIN_SLUG) .'</option>';
 				$html_instance .= '<option '. (array_key_exists($option_name, $current_options) ? selected($current_options[$option_name], false, false) : '') .' value="false">'. __('No', ATSU_PLUGIN_SLUG) .'</option>';
 				$html_instance .= '</select>';
@@ -226,7 +227,7 @@ class AnythingSetUpperAdminOptions {
 				} elseif (preg_match('/\.\*/i', $schema[3])) {
 					$form_size = 45;
 				}
-				$html_instance = '<input name="atsu_setting_options['. $option_name .']" id="'. $option_name .'" type="'. $form_type .'" size="'. $form_size .'" value="'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $schema[1]) .'" placeholder="'. $schema[2] .'">';
+				$html_instance = '<input name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'" type="'. $form_type .'" size="'. $form_size .'" value="'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $schema[1]) .'" placeholder="'. $schema[2] .'">';
 				break;
 			case 'password': 
 				$form_size = 20;
@@ -250,12 +251,12 @@ class AnythingSetUpperAdminOptions {
 				} else {
 					$password_value = '';
 				}
-				$html_instance = '<input name="astu_setting_options['. $option_name .']" id="'. $option_name .'" type="password" size="'. $form_size .'" value="'. $password_value .'" placeholder="'. $schema[2] .'">';
+				$html_instance = '<input name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'" type="password" size="'. $form_size .'" value="'. $password_value .'" placeholder="'. $schema[2] .'">';
 				break;
 			case 'textarea': 
 				
 				
-				$html_instance = '<textarea name="astu_setting_options['. $option_name .']" id="'. $option_name .'" placeholder="'. $schema[2] .'">'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $schema[1]) .'</textarea>';
+				$html_instance = '<textarea name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'" placeholder="'. $schema[2] .'">'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $schema[1]) .'</textarea>';
 				break;
 			case 'integer': 
 				$form_size = 10;
@@ -277,14 +278,14 @@ class AnythingSetUpperAdminOptions {
 						}
 					}
 				}
-				$html_instance = '<input name="atsu_setting_options['. $option_name .']" id="'. $option_name .'" type="number" size="'. $form_size .'" style="width: '. $form_size .'em;" value="'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $default_value) .'">' . $add_unit;
+				$html_instance = '<input name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'" type="number" size="'. $form_size .'" style="width: '. $form_size .'em;" value="'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $default_value) .'">' . $add_unit;
 				break;
 			case 'select': 
 				$box_type = $schema[3];
 				$default_index = is_string($schema[1]) ? explode(',', $schema[1]) : intval($schema[1]);
 				$attr = $box_type == 'multi' ? 'multiple' : '';
 				$box_size = $box_type == 'multi' ? 'size="'. count($schema[2]) .'"' : '';
-				$html_instance = '<select name="astu_setting_options['. $option_name .']'. ($box_type == 'multi' ? '[]' : '') .'" id="'. $option_name .'" '. $box_size .' '. $attr .' style="width: %dem;">';
+				$html_instance = '<select name="'. $post_array_name .'['. $option_name .']'. ($box_type == 'multi' ? '[]' : '') .'" id="'. $option_name .'" '. $box_size .' '. $attr .' style="width: %dem;">';
 				$index_num = 0;
 				$max_strlen_value = 1;
 				foreach ($schema[2] as $index_value => $display_value) {
@@ -315,7 +316,7 @@ class AnythingSetUpperAdminOptions {
 				$index_num = 0;
 				foreach ($schema[2] as $index_value => $display_value) {
 					$add_style = $index_num > 0 ? 'style="margin-left: 1em;"' : '';
-					$html_instance .= '<input type="radio" name="atsu_setting_options['. $option_name .']" id="'. $option_name .'-'. $index_num .'" '. (array_key_exists($option_name, $current_options) ? checked($current_options[$option_name], $index_value, false) : checked($default_index, $index_num, false)) .' value="'. $index_value .'" '. $add_style .'><label for="'. $option_name .'-'. $index_num .'">'. $display_value .'</label>';
+					$html_instance .= '<input type="radio" name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'-'. $index_num .'" '. (array_key_exists($option_name, $current_options) ? checked($current_options[$option_name], $index_value, false) : checked($default_index, $index_num, false)) .' value="'. $index_value .'" '. $add_style .'><label for="'. $option_name .'-'. $index_num .'">'. $display_value .'</label>';
 					$index_num++;
 				}
 				break;
@@ -346,7 +347,7 @@ class AnythingSetUpperAdminOptions {
 						}
 						$attr_checked = checked($current_value, $index_num, false);
 					}
-					$html_instance .= '<input type="checkbox" name="atsu_setting_options['. $option_name .'][]" id="'. $option_name .'-'. $index_num .'" '. $attr_checked .' value="'. $index_value .'" '. $add_style .'><label for="'. $option_name .'-'. $index_num .'">'. $display_value .'</label>' . $add_break;
+					$html_instance .= '<input type="checkbox" name="'. $post_array_name .'['. $option_name .'][]" id="'. $option_name .'-'. $index_num .'" '. $attr_checked .' value="'. $index_value .'" '. $add_style .'><label for="'. $option_name .'-'. $index_num .'">'. $display_value .'</label>' . $add_break;
 					$index_num++;
 				}
 				break;
