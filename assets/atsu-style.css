@@ -73,11 +73,27 @@ th {
 
 .configure-items>li {
 	display: block;
+	position: relative;
 	float: left;
 	width: 50%;
-	height: 60px;
+	min-height: 60px;
 	padding: 0px 8px 14px 0px;
 }
+
+.configure-items>li>label {
+	font-weight: bold;
+	font-size: .86rem;
+}
+
+.configure-items>li>div {
+	margin-top: 3px;
+}
+
+.preset_regx {
+	position: absolute;
+	display: none;
+}
+
 .hide-content {
 	display: none;
 }
@@ -97,6 +113,12 @@ th {
 	border-top-left-radius: 4px;
 	color: #202020;
 	background-color: #e8e8e8;
+}
+
+.accordion-toggle>strong.highlight {
+	background-color: transparent;
+	font-size: 1rem;
+	color: #0074a2;
 }
 
 .accordion-icon {
@@ -121,15 +143,28 @@ th {
 	background-color: transparent;
 }
 
+.poic-source {
+	margin-top: 3px;
+	margin-bottom: 9px;
+}
+
+.poic-source>code {
+	display: block;
+	padding: 8px 10px;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	color: #555;
+}
+
 .baloon_box {
-	position: relative;
+	position: absolute;
 	max-width: 320px;
-	padding: 4px;
+	padding: 6px 8px;
 	background: #202020;
 	border: 1px solid #555555;
 	border-radius: 3px;
 	color: #ffffff;
-	font-size: .86rem;
+	font-size: .75rem;
 	box-shadow: 1px 1px 2px 1px rgba(0,0,0,.2);
 	z-index: 999;
 }
@@ -160,6 +195,7 @@ th {
 .brick-controller {
 	max-width: 100%;
 }
+
 .button-brick {
 	clear: both;
 	display: block;
@@ -167,17 +203,36 @@ th {
 	padding-top: 15px;
 	border-top: 1px solid #ececec;
 }
+
 .button-brick>input, .button-brick>button {
 	margin-left: 15px!important;
 }
+
 .button-brick>input:first-child {
 	margin-left: 0px!important;
 }
+
 .pull-left {
 	float: left;
 }
-.ui-accordion-header>strong.highlight {
-	background-color: transparent;
-	font-size: 1rem;
-	color: #0074a2;
+
+.badge {
+	display: inline-block;
+	min-width: 10px;
+	padding: 3px 7px;
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	background-color: #777;
+	border-radius: 10px;
+}
+
+.badge-notice {
+	padding: 1px 7px 3px;
+	margin-left: 9px;
+	background-color: #0074a2;
 }

@@ -25,9 +25,8 @@ class AnythingSetUpperAdminOptions {
 	protected function init() {
 		$atsu_options_schema = array(
 			// option_key	=>	[ 0:TYPE, 1:DEFAULT, 2:PLACEHOLDER|ITEMS_ARRAY, 3:VALIDATE_REGX|IS_MULTI, 4:LABEL, 5:HELPER_TEXT, 6:ENABLE, 7:EXTRA ]
-			'option_title' => [ 'string', '', __('Please enter a option title', ATSU_PLUGIN_SLUG), '/^[a-z]{1}+[a-z0-9_\-]+?$/i', __('Setting option title', ATSU_PLUGIN_SLUG), __('In order to become a column name of the options table, you must be a unique name that does not same with other columns in using half-width alphanumeric and hyphen and underscore.', ATSU_PLUGIN_SLUG), true, 'require' ],
-			'field_name' => [ 'string', 'test', __('Please enter a field name', ATSU_PLUGIN_SLUG), '/^[a-z]{1}+[a-z0-9_\-]+?$/i', __('Field name', ATSU_PLUGIN_SLUG), __('In order to become a system name of the setting, you must be a unique name that does not same with other settings in using half-width alphanumeric and hyphen and underscore.', ATSU_PLUGIN_SLUG), true, 'require' ],
-			'field_order' => [ 'integer', 0, __('Please enter a field order', ATSU_PLUGIN_SLUG), '/^\d{,3}/', __('Field order', ATSU_PLUGIN_SLUG), __('I will be in the order of from the top of this setting item.', ATSU_PLUGIN_SLUG), true, ],
+			'option_title' => [ 'string', '', __('Please enter option title', ATSU_PLUGIN_SLUG), '^[a-z]{1}+[a-z0-9_\-]+?$', __('Setting Option Name', ATSU_PLUGIN_SLUG), __('In order to become a column name of the options table, you must be a unique name that does not same with other columns in using half-width alphanumeric and hyphen and underscore.', ATSU_PLUGIN_SLUG), true, ['require'=>true] ],
+			'field_name' => [ 'string', 'gaid', __('Please enter field name', ATSU_PLUGIN_SLUG), '^[a-z]{1}+[a-z0-9_\-]+?$', __('Field Name', ATSU_PLUGIN_SLUG), __('In order to become a system name of the setting, you must be a unique name that does not same with other settings in using half-width alphanumeric and hyphen and underscore.', ATSU_PLUGIN_SLUG), true, ['require'=>true] ],
 			'field_type' => [ 'select', 0, [
 					'string' => __('Textfield', ATSU_PLUGIN_SLUG), 
 					'password' => __('Password field', ATSU_PLUGIN_SLUG), 
@@ -39,18 +38,22 @@ class AnythingSetUpperAdminOptions {
 					'select_multi' => __('Multiple-choice select-box', ATSU_PLUGIN_SLUG), 
 					'check_multi' => __('Multiple-choice check-list', ATSU_PLUGIN_SLUG), 
 					'hidden' => __('Hidden field', ATSU_PLUGIN_SLUG), 
-				], 'single', __('The input field format', ATSU_PLUGIN_SLUG), __('Please specify the form format of the input field.', ATSU_PLUGIN_SLUG), true, 'require' ], 
-			'default_string_value' => [ 'string', '', __('Please enter a default value', ATSU_PLUGIN_SLUG), null, __('Default value', ATSU_PLUGIN_SLUG), __('Please set only if you want to specify a default value.', ATSU_PLUGIN_SLUG), true, ], 
-			'placeholder' => [ 'string', '', __('Please enter a placeholder text', ATSU_PLUGIN_SLUG), null, __('Placeholder text', ATSU_PLUGIN_SLUG), __('Designation of the placeholder text is optional.', ATSU_PLUGIN_SLUG), true, ],
-			'item_value' => [ 'string', '', __('Please enter a item value', ATSU_PLUGIN_SLUG), '/^[a-z]{1}+[a-z0-9_\-]+?$/i', __('Item value', ATSU_PLUGIN_SLUG), __('To become a value to be handled by the system, please specify in the alphanumeric and hyphen and underscore. If you do not specify will be replaced by the index number of the item.', ATSU_PLUGIN_SLUG), true, ],
-			'item_display_name' => [ 'string', '', __('Please enter a item display name', ATSU_PLUGIN_SLUG), null, __('Item display name', ATSU_PLUGIN_SLUG), __('It will be the name that will be displayed as choices.', ATSU_PLUGIN_SLUG), true, ],
-			'validate_regx' => [ 'string', '', __('Please enter a regular expression for validation', ATSU_PLUGIN_SLUG), null, __('Regular expression for validation', ATSU_PLUGIN_SLUG), __('Setting of this item is optional.', ATSU_PLUGIN_SLUG), true, ],
-			'is_multi' => [ 'radio', 0, ['single'=>__('Single-choice', ATSU_PLUGIN_SLUG), 'multi'=>__('Multiple-choice', ATSU_PLUGIN_SLUG)], null, __('Selection expression definition', ATSU_PLUGIN_SLUG), __('Please choose which allow multiple selection or a single item only.', ATSU_PLUGIN_SLUG), true, 'require' ],
-			'label' => [ 'string', 'TEST', __('Please enter a display label', ATSU_PLUGIN_SLUG), null, __('Display label', ATSU_PLUGIN_SLUG), '', true, 'require' ],
-			'helper_text' => [ 'string', '', __('Please enter a description as help', ATSU_PLUGIN_SLUG), null, __('Description as help', ATSU_PLUGIN_SLUG), __('Designation of the placeholder text is optional.', ATSU_PLUGIN_SLUG), true, ],
-			'enable_field' => [ 'boolean', true, null, null, __('Enabling input field', ATSU_PLUGIN_SLUG), __('It does not output as a hidden field if you disable the input field.', ATSU_PLUGIN_SLUG), true, 'require' ],
-			'unit' => [ 'string', '', __('Please enter a unit', ATSU_PLUGIN_SLUG), null, __('Unit name', ATSU_PLUGIN_SLUG), __('It is additionally displayed as a suffix of the input field, such as unit.', ATSU_PLUGIN_SLUG), true, ],
-			'extra' => [ 'check', 0, [ 'require'=>__('Require', ATSU_PLUGIN_SLUG), 'encrypt'=>__('Encrypt', ATSU_PLUGIN_SLUG) ], 'multi', __('Extra setting', ATSU_PLUGIN_SLUG), __('Please choose items.', ATSU_PLUGIN_SLUG), true, ],
+				], 'single', __('The input field format', ATSU_PLUGIN_SLUG), __('Please specify the form format of the input field.', ATSU_PLUGIN_SLUG), true, ['require'=>true] ], 
+			'label' => [ 'string', 'Google Analytics ID', __('Please enter display label', ATSU_PLUGIN_SLUG), null, __('Display Label', ATSU_PLUGIN_SLUG), __('It will be the title of the item that appears to the left of the input field.', ATSU_PLUGIN_SLUG), true, ['require'=>true] ],
+			'enable_field' => [ 'boolean', true, null, null, __('Enabling Input Field', ATSU_PLUGIN_SLUG), __('It does not output as a hidden field if you disable the input field.', ATSU_PLUGIN_SLUG), true, ['require'=>true] ],
+//			'is_multi' => [ 'radio', 0, ['single'=>__('Single-choice', ATSU_PLUGIN_SLUG), 'multi'=>__('Multiple-choice', ATSU_PLUGIN_SLUG)], null, __('Selection Expression Definition', ATSU_PLUGIN_SLUG), __('Please choose which allow multiple selection or a single item only.', ATSU_PLUGIN_SLUG), true, ['require'=>true] ],
+			'extra' => [ 'check', '', [ 'require'=>__('Input required fields', ATSU_PLUGIN_SLUG), 'encrypt'=>__('Encryption of the input value', ATSU_PLUGIN_SLUG) ], 'multi', __('Advanced Settings', ATSU_PLUGIN_SLUG), __('Please check the item you want.', ATSU_PLUGIN_SLUG), true, ],
+			'field_order' => [ 'integer', 0, __('Please enter field order', ATSU_PLUGIN_SLUG), '^\d{,3}', __('Field Order', ATSU_PLUGIN_SLUG), __('I will be in the order of from the top of this setting item.', ATSU_PLUGIN_SLUG), true, ],
+			'item_value' => [ 'string', '', __('Please enter item value(s)', ATSU_PLUGIN_SLUG), '^[a-z0-9_\-]+?$', __('Item Value(s)', ATSU_PLUGIN_SLUG), __('To become a value to be handled by the system, please specify in the alphanumeric and hyphen and underscore. If you do not specify will be replaced by the index number of the item.', ATSU_PLUGIN_SLUG), true, ],
+			'item_display_name' => [ 'string', '', __('Please enter item display name(s)', ATSU_PLUGIN_SLUG), null, __('Item Display Name(s)', ATSU_PLUGIN_SLUG), __('It will be the name that will be displayed as choices.', ATSU_PLUGIN_SLUG), true, ],
+			'default_string_value' => [ 'string', 'UA-1849676-1', __('Please enter default value(s)', ATSU_PLUGIN_SLUG), null, __('Default Value(s)', ATSU_PLUGIN_SLUG), __('Please set only if you want to specify default value(s).', ATSU_PLUGIN_SLUG), true, ], 
+			'validate_regx' => [ 'string', '^UA\-\d{7,}-\d{1,}$', __('Please enter regular expression for validation', ATSU_PLUGIN_SLUG), null, __('Regular Expression for Validation', ATSU_PLUGIN_SLUG), __('Input values is validated what conform to this regular expression. If you chose as general regular expression pattern from the preset, UI of the input field will be optimized.', ATSU_PLUGIN_SLUG), true, ],
+			'placeholder' => [ 'string', 'UA-XXXXXXX-Y', __('Please enter placeholder text', ATSU_PLUGIN_SLUG), null, __('Placeholder Text', ATSU_PLUGIN_SLUG), __('Designation of the placeholder text is optional.', ATSU_PLUGIN_SLUG), true, ],
+			'helper_text' => [ 'textarea', 'Please enter the Google Analytics ID to be used to analyze this site.', __('Please enter description as help', ATSU_PLUGIN_SLUG), null, __('Description as Help', ATSU_PLUGIN_SLUG), __('Designation of the placeholder text is optional.', ATSU_PLUGIN_SLUG), true, ['cols'=>50, 'rows'=>2] ],
+			'unit' => [ 'string', '', __('Please enter unit', ATSU_PLUGIN_SLUG), null, __('Unit Name', ATSU_PLUGIN_SLUG), __('It is additionally displayed as a suffix of the input field, such as unit.', ATSU_PLUGIN_SLUG), true, ['field_size'=>10] ],
+			'field_size' => [ 'integer', 30, __('Please enter field size', ATSU_PLUGIN_SLUG), '^\d{,3}', __('Field Size', ATSU_PLUGIN_SLUG), __('This number is the width of the input field.', ATSU_PLUGIN_SLUG), true, ],
+			'cols' => [ 'integer', 45, __('Please enter cols size', ATSU_PLUGIN_SLUG), '^\d{,3}', __('Cols Size', ATSU_PLUGIN_SLUG), __('It is the value of the cols attribute is the width of the textarea.', ATSU_PLUGIN_SLUG), true, ],
+			'rows' => [ 'integer', 4, __('Please enter rows size', ATSU_PLUGIN_SLUG), '^\d{,3}', __('Rows Size', ATSU_PLUGIN_SLUG), __('This is the number of rows that becomes the height of the input field.', ATSU_PLUGIN_SLUG), true, ],
 		);
 		$this->plugin_options_schema = $atsu_options_schema;
 		
@@ -120,6 +123,8 @@ class AnythingSetUpperAdminOptions {
 				$main_tag = 'ul';
 				$parent_class = 'configure-items';
 				unset($this->plugin_options_schema['option_title']);
+//				$order = array(0,5,1,8,10,6,7,9,4,2,11,3,13,12);
+//				array_multisort($order, $this->plugin_options_schema);
 				$option_title = isset($_REQUEST['optnm']) && !empty($_REQUEST['optnm']) ? $_REQUEST['optnm'] : '';
 				if (!empty($option_title) && array_key_exists($option_title, $this->plugin_current_options['options'])) {
 //					$main_contents .= '<caption>'. __('Option Name', ATSU_PLUGIN_SLUG) .': <strong>'. $option_title .'</strong> '. __('configuration items editing', ATSU_PLUGIN_SLUG) .'</caption>';
@@ -198,15 +203,15 @@ class AnythingSetUpperAdminOptions {
 		$label_text = $schema[4];
 		$description_text = $schema[5];
 		$enabled = isset($schema[6]) && !empty($schema[6]) && $schema[6] == 'false' ? false : true;
-		$extra = isset($schema[7]) && !empty($schema[7]) ? explode(',', $schema[7]) : array();
-		$is_require = false;
-		foreach($extra as $i => $val) {
-			if ($val == 'require') {
-				$is_require = true;
-				unset($extra[$i]);
-				break;
-			}
+		$extra = array();
+		if (isset($schema[7]) && !empty($schema[7])) {
+			$extra =  is_array($schema[7]) ? $schema[7] : array();
 		}
+		$is_require = isset($extra['require']) && !empty($extra['require']) ? $extra['require'] : false;
+		$is_encrypt = isset($extra['encrypt']) && !empty($extra['encrypt']) ? $extra['encrypt'] : false;
+		$field_size = isset($extra['field_size']) && !empty($extra['field_size']) ? intval($extra['field_size']) : null;
+		$cols = isset($extra['cols']) && !empty($extra['cols']) ? intval($extra['cols']) : null;
+		$rows = isset($extra['rows']) && !empty($extra['rows']) ? intval($extra['rows']) : null;
 		$html_instance = '';
 		switch ($component_type) {
 			case 'boolean': 
@@ -227,6 +232,7 @@ class AnythingSetUpperAdminOptions {
 				} elseif (preg_match('/\.\*/i', $schema[3])) {
 					$form_size = 45;
 				}
+				$form_size = !empty($field_size) ? $field_size : $form_size;
 				$html_instance = '<input name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'" type="'. $form_type .'" size="'. $form_size .'" value="'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $schema[1]) .'" placeholder="'. $schema[2] .'">';
 				break;
 			case 'password': 
@@ -237,6 +243,7 @@ class AnythingSetUpperAdminOptions {
 					$maxlength = !empty($strlen_ary[$values-1]) ? intval($strlen_ary[$values-1]) : intval($strlen_ary[0]);
 					$form_size = $maxlength > $form_size ? $maxlength : $form_size;
 				}
+				$form_size = !empty($field_size) ? $field_size : $form_size;
 				if (array_key_exists($option_name, $current_options)) {
 					$password_value = ms_do_encrypt($current_options[$option_name], 'composite');
 					if (!$password_value) {
@@ -254,9 +261,9 @@ class AnythingSetUpperAdminOptions {
 				$html_instance = '<input name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'" type="password" size="'. $form_size .'" value="'. $password_value .'" placeholder="'. $schema[2] .'">';
 				break;
 			case 'textarea': 
-				
-				
-				$html_instance = '<textarea name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'" placeholder="'. $schema[2] .'">'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $schema[1]) .'</textarea>';
+				$attr_cols = !empty($cols) ? ' cols="'. $cols .'"' : '';
+				$attr_rows = !empty($rows) ? ' rows="'. $rows .'"' : '';
+				$html_instance = '<textarea name="'. $post_array_name .'['. $option_name .']" id="'. $option_name .'" placeholder="'. $schema[2] .'"'. $attr_cols . $attr_rows .'>'. (array_key_exists($option_name, $current_options) ? $current_options[$option_name] : $schema[1]) .'</textarea>';
 				break;
 			case 'integer': 
 				$form_size = 10;
@@ -268,6 +275,7 @@ class AnythingSetUpperAdminOptions {
 					$maxlength = !empty($strlen_ary[$values-1]) ? intval($strlen_ary[$values-1]) : intval($strlen_ary[0]);
 					$form_size += $maxlength > $form_size ? $maxlength : $form_size;
 				}
+				$form_size = !empty($field_size) ? $field_size : $form_size;
 				$add_unit = '';
 				if (!empty($extra)) {
 					foreach($extra as $i => $val) {
@@ -285,6 +293,7 @@ class AnythingSetUpperAdminOptions {
 				$default_index = is_string($schema[1]) ? explode(',', $schema[1]) : intval($schema[1]);
 				$attr = $box_type == 'multi' ? 'multiple' : '';
 				$box_size = $box_type == 'multi' ? 'size="'. count($schema[2]) .'"' : '';
+				$box_size = !empty($rows) ? $rows : $box_size;
 				$html_instance = '<select name="'. $post_array_name .'['. $option_name .']'. ($box_type == 'multi' ? '[]' : '') .'" id="'. $option_name .'" '. $box_size .' '. $attr .' style="width: %dem;">';
 				$index_num = 0;
 				$max_strlen_value = 1;
@@ -355,6 +364,8 @@ class AnythingSetUpperAdminOptions {
 				break;
 		}
 		if (!empty($html_instance)) {
+			if ($is_require) 
+				$label_text .= ' <span class="badge badge-notice">'. __('Require', ATSU_PLUGIN_SLUG) .'</span>';
 			if ($wrapper == 'table') {
 				$form_elements .= sprintf($form_elements_template, $label_text, $label_text, $html_instance, $description_text);
 			} elseif ($wrapper == 'list') {
