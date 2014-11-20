@@ -107,7 +107,7 @@ class AnythingSetUpperAdminOptions {
 			case 'list': 
 				$main_tag = 'table';
 				$parent_class = 'table table-bordered table-hover';
-				$action = 'add';
+				$action = 'add_option';
 				$buttons_html = '';
 				
 				$main_contents .= sprintf('<thead><tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead>', __('Option Name', ATSU_PLUGIN_SLUG), __('Option Items', ATSU_PLUGIN_SLUG), __('Edit Detail', ATSU_PLUGIN_SLUG), __('Delete Options', ATSU_PLUGIN_SLUG));
@@ -137,15 +137,15 @@ class AnythingSetUpperAdminOptions {
 					$before_main_contents .= "<div id=\"atsu-cie-body\" class=\"accordion-content\">\n";
 					if (isset($option_title) && !empty($option_title)) {
 						$current_options = $this->plugin_current_options['options'][$option_title];
-						$action = 'update';
-						$buttons_html = get_submit_button( __('Update options', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'update') );
+						$action = 'add_item';
+						$buttons_html = get_submit_button( __('Add Option Item', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'update') );
 						
 					} else {
 						$current_options = array();
-						$action = 'regist';
-						$buttons_html = get_submit_button( __('Regist options', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'regist') );
+						$action = 'update_item';
+						$buttons_html = get_submit_button( __('Update Option Item', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'regist') );
 					}
-					$buttons_html .= get_submit_button( __('Reset options', ATSU_PLUGIN_SLUG), 'delete large', 'submit', false, array('id'=>'reset') );
+					$buttons_html .= get_submit_button( __('Reset Option Item', ATSU_PLUGIN_SLUG), 'delete large', 'submit', false, array('id'=>'reset') );
 //					$cols = 1;
 					foreach ($this->plugin_options_schema as $option_name => $schema) {
 //						$main_contents .= $cols%2 == 1 ? "<tr>\n" : '';
@@ -171,7 +171,7 @@ class AnythingSetUpperAdminOptions {
     <?php $this->admin_notice(); ?>
     <form method="post" action="" id="atsu-admin-form">
       <input type="hidden" name="action" value="<?php echo $action; ?>">
-      <input type="hidden" name="option_name" value="">
+      <input type="hidden" name="option_name" value="<?php echo isset($option_title) ? $option_title : ''; ?>">
       <input type="hidden" name="option_schema" value="">
       <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce(ATSU_PLUGIN_SLUG .'_submit', '_wpnonce'); ?>">
       <?php echo $before_main_contents; ?>
@@ -378,9 +378,11 @@ class AnythingSetUpperAdminOptions {
 	}
 	
 	private function options_setting_action() {
+var_dump($_SERVER['REQUEST_URI']);
 		if (!preg_match('/page\='. ATSU_PLUGIN_SLUG .'/i', $_SERVER['REQUEST_URI'])) {
 			return;
 		}
+var_dump($_POST);
 		if (!isset($_POST['action']) || !isset($_POST['_wpnonce']) || !isset($_POST['atsu_setting_options']) || empty($_POST['atsu_setting_options'])) {
 			return;
 		}
@@ -391,12 +393,13 @@ class AnythingSetUpperAdminOptions {
 		$options_list = $this->plugin_current_options['options'];
 		$set_options = $_POST['atsu_setting_options'];
 		$mode = (isset($_POST['submit']) && !empty($_POST['submit'])) ? $_POST['action'] : '';
+var_dump($mode);
 		$option_name = isset($_POST['option_name']) && !empty($_POST['option_name']) ? $_POST['option_name'] : '';
 		$status = array();
 		$store_options = array();
 		
 		switch($mode) { // updated after options value validate
-			case 'add': 
+			case 'add_option': 
 				foreach ($set_options as $option_name => $option_value) {
 					list($message, $fixed_value) = $this->validate_option_values($option_name, $option_value);
 					$store_options[$option_name] = $fixed_value;
@@ -445,7 +448,9 @@ class AnythingSetUpperAdminOptions {
 					$atsu_message = [ 'error', implode("<br>\n", $status) ];
 				}
 				break;
-			case 'update': 
+			case 'add_item': 
+var_dump($option_name);
+var_dump($_POST['atsu_setting_options']);
 				foreach ($set_options as $option_name => $option_value) {
 					list($status[], $fixed_value) = $this->validate_option_values($option_name, $option_value);
 					$store_options[$option_name] = $fixed_value;
@@ -472,8 +477,8 @@ class AnythingSetUpperAdminOptions {
 					$atsu_message = [ 'error', implode("<br>\n", $status) ];
 				}
 				break;
-			case 'reset': 
-				delete_option(ATSU_PLUGIN_SLUG);
+			case 'update_item': 
+				
 				break;
 			default: 
 				return;
