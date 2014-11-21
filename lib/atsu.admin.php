@@ -123,11 +123,8 @@ class AnythingSetUpperAdminOptions {
 				$main_tag = 'ul';
 				$parent_class = 'configure-items';
 				unset($this->plugin_options_schema['option_title']);
-//				$order = array(0,5,1,8,10,6,7,9,4,2,11,3,13,12);
-//				array_multisort($order, $this->plugin_options_schema);
 				$option_title = isset($_REQUEST['optnm']) && !empty($_REQUEST['optnm']) ? $_REQUEST['optnm'] : '';
 				if (!empty($option_title) && array_key_exists($option_title, $this->plugin_current_options['options'])) {
-//					$main_contents .= '<caption>'. __('Option Name', ATSU_PLUGIN_SLUG) .': <strong>'. $option_title .'</strong> '. __('configuration items editing', ATSU_PLUGIN_SLUG) .'</caption>';
 					$before_main_contents .= "<div id=\"atsu-collapse\" class=\"accordion-list\">\n";
 					$before_main_contents .= '<h4 id="atsu-vsp-head" class="accordion-toggle"><div class="accordion-icon"><span class="dashicons dashicons-arrow-right-alt2"></span></div> '. __('Verifying Setting Page (preview)', ATSU_PLUGIN_SLUG) ."<strong class=\"highlight\"></strong></h4>\n";
 					$before_main_contents .= "<div id=\"atsu-vsp-body\" class=\"accordion-content\"></div>\n";
@@ -138,22 +135,17 @@ class AnythingSetUpperAdminOptions {
 					if (isset($option_title) && !empty($option_title)) {
 						$current_options = $this->plugin_current_options['options'][$option_title];
 						$action = 'add_item';
-						$buttons_html = get_submit_button( __('Add Option Item', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'update') );
+						$buttons_html = get_submit_button( __('Add Option Item', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'atsu-add_item-' . $option_title, 'data-option-name'=>$option_title) );
 						
 					} else {
 						$current_options = array();
 						$action = 'update_item';
-						$buttons_html = get_submit_button( __('Update Option Item', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'regist') );
+						$buttons_html = get_submit_button( __('Update Option Item', ATSU_PLUGIN_SLUG), 'primary large', 'submit', false, array('id'=>'atsu-update_item-' . $option_title, 'data-option-name'=>$option_title) );
 					}
-					$buttons_html .= get_submit_button( __('Reset Option Item', ATSU_PLUGIN_SLUG), 'delete large', 'submit', false, array('id'=>'reset') );
-//					$cols = 1;
+					$buttons_html .= get_submit_button( __('Reset Option Item', ATSU_PLUGIN_SLUG), 'delete large', 'submit', false, array('id'=>'atsu-reset-' . $option_title) );
 					foreach ($this->plugin_options_schema as $option_name => $schema) {
-//						$main_contents .= $cols%2 == 1 ? "<tr>\n" : '';
 						$main_contents .= $this->render_component_form_element($option_name, $schema, $current_options, 'list', 'nolabel');
-//						$main_contents .= $cols%2 == 0 ? "</tr>\n" : '';
-//						$cols++;
 					}
-//					$main_contents .= $cols%2 == 0 ? "<td colspan=\"2\"></td>\n</tr>\n" : '';
 					$after_main_contents .= '<div class="button-brick">'. $buttons_html ."</div>\n";
 					$after_main_contents .= "</div>\n</div>\n";
 					$buttons_html = '';
@@ -378,11 +370,9 @@ class AnythingSetUpperAdminOptions {
 	}
 	
 	private function options_setting_action() {
-var_dump($_SERVER['REQUEST_URI']);
 		if (!preg_match('/page\='. ATSU_PLUGIN_SLUG .'/i', $_SERVER['REQUEST_URI'])) {
 			return;
 		}
-var_dump($_POST);
 		if (!isset($_POST['action']) || !isset($_POST['_wpnonce']) || !isset($_POST['atsu_setting_options']) || empty($_POST['atsu_setting_options'])) {
 			return;
 		}
@@ -393,7 +383,6 @@ var_dump($_POST);
 		$options_list = $this->plugin_current_options['options'];
 		$set_options = $_POST['atsu_setting_options'];
 		$mode = (isset($_POST['submit']) && !empty($_POST['submit'])) ? $_POST['action'] : '';
-var_dump($mode);
 		$option_name = isset($_POST['option_name']) && !empty($_POST['option_name']) ? $_POST['option_name'] : '';
 		$status = array();
 		$store_options = array();
@@ -449,32 +438,43 @@ var_dump($mode);
 				}
 				break;
 			case 'add_item': 
-var_dump($option_name);
-var_dump($_POST['atsu_setting_options']);
-				foreach ($set_options as $option_name => $option_value) {
-					list($status[], $fixed_value) = $this->validate_option_values($option_name, $option_value);
-					$store_options[$option_name] = $fixed_value;
+				$error_msg = array();
+				foreach ($set_options as $item_name => $item_value) {
+					list($status, $fixed_value) = $this->validate_option_values($item_name, $item_value);
+					if (empty($status)) {
+						$store_options[$item_name] = $item_name == 'validate_regx' ? stripcslashes($fixed_value) : $fixed_value;
+					} else {
+						$error_msg[] = $status;
+					}
 				}
 				
 				// save or error
-				if (empty($status)) {
-					if (array_key_exists('option_title', $store_options)) {
-						$current_option_name = $store_options['option_title'];
-						unset($store_options['option_title']);
-						if (array_key_exists($current_option_name, $options_list)) {
-							$atsu_message = [ 'updated', sprintf(__('The options of <strong>%s</strong> have updated.', ATSU_PLUGIN_SLUG), $current_option_name) ];
+				if (empty($error_msg)) {
+					if (array_key_exists($option_name, $options_list)) {
+						if (!array_key_exists($store_options['field_name'], $options_list[$option_name])) {
+							$insert_order = $store_options['field_order'] > 0 ? $store_options['field_order'] : null;
+							$insert_item = array($store_options['field_name'] => array(
+								$store_options['field_type'], 
+								$store_options['default_string_value'], 
+								$store_options['placeholder'], 
+								$store_options['validate_regx'], 
+								$store_options['label'], 
+								$store_options['helper_text'], 
+								$store_options['enable_field'], 
+								array('field_size'=>$store_options['field_size']), 
+							));
+							$this->array_insert($options_list[$option_name], $insert_item, $insert_order);
+							$this->plugin_current_options['options'] = $options_list;
+							update_option(ATSU_PLUGIN_SLUG, $this->plugin_current_options);
+							$atsu_message = [ 'update', __('Added the option settings.', ATSU_PLUGIN_SLUG) ];
 						} else {
-							//$options_list[] = $store_options;
-							$atsu_message = [ 'updated', sprintf(__('The options of <strong>%s</strong> added new.', ATSU_PLUGIN_SLUG), $current_option_name) ];
+							$atsu_message = [ 'error', __('The item already exists. The same name of the item can not be added.', ATSU_PLUGIN_SLUG) ];
 						}
-						$options_list[$current_option_name] = $store_options;
-						$this->plugin_current_options['options'] = $options_list;
-						update_option(ATSU_PLUGIN_SLUG, $this->plugin_current_options);
 					} else {
-						$atsu_message = [ 'error', __('The option settings to save was none.', ATSU_PLUGIN_SLUG) ];
+						$atsu_message = [ 'error', __('The saving option settings does not exists.', ATSU_PLUGIN_SLUG) ];
 					}
 				} else {
-					$atsu_message = [ 'error', implode("<br>\n", $status) ];
+					$atsu_message = [ 'error', implode("<br>\n", $error_msg) ];
 				}
 				break;
 			case 'update_item': 
@@ -504,7 +504,7 @@ var_dump($_POST['atsu_setting_options']);
 				$fixed_value = $option_value == 'true' ? true : false;
 			}
 			if ($data_type == 'string') {
-				$regx = $options_schema[$option_name][3];
+				$regx = sprintf('/%s/', stripcslashes($options_schema[$option_name][3]));
 				if (!empty($option_value) && !empty($regx)) {
 					if (!preg_match($regx, $option_value)) {
 						$message = sprintf(__('<strong>%s</strong> is invalid data!', ATSU_PLUGIN_SLUG), $options_schema[$option_name][4]);
@@ -535,5 +535,93 @@ var_dump($_POST['atsu_setting_options']);
 		}
 		return array($message, $fixed_value);
 	}
+	
+	/**
+	 * 配列（連想配列にも対応）の指定位置に要素（配列にも対応）を挿入して、挿入後の配列を返す
+	 * 
+	 * @param array &$base_array 挿入したい配列
+	 * @param mixed $insert_value 挿入する値（文字列、数値、配列のいずれか）
+	 * @param int $position 挿入位置（省略可能。先頭は0、省略時は配列末尾に挿入される）
+	 * @return boolean 挿入成功時にtrue
+	 **/
+	public function array_insert(&$base_array, $insert_value, $position=null) {
+		if (!is_array($base_array)) 
+			return false;
+		$position = is_null($position) ? count($base_array) : intval($position);
+		$base_keys = array_keys($base_array);
+		$base_values = array_values($base_array);
+		if (is_array($insert_value)) {
+			$insert_keys = array_keys($insert_value);
+			$insert_values = array_values($insert_value);
+		} else {
+			$insert_keys = array(0);
+			$insert_values = array($insert_value);
+		}
+		$insert_keys_after = array_splice($base_keys, $position);
+		$insert_values_after = array_splice($base_values, $position);
+		foreach ($insert_keys as $insert_keys_value) {
+			array_push($base_keys, $insert_keys_value);
+		}
+		foreach ($insert_values as $insert_values_value) {
+			array_push($base_values, $insert_values_value);
+		}
+		$base_keys = array_merge($base_keys, $insert_keys_after);
+		$is_key_numric = true;
+		foreach ($base_keys as $key_value) {
+			if (!is_integer($key_value)) {
+				$is_key_numric = false;
+				break;
+			}
+		}
+		$base_values = array_merge($base_values, $insert_values_after);
+		if ($is_key_numric) {
+			$base_array = $base_values;
+		} else {
+			$base_array = array_combine($base_keys, $base_values);
+		}
+		return true;
+	}
+	
+	/**
+	 * 配列（連想配列にも対応）の任意の位置から指定数分の要素を削除して、削除後の配列を返す
+	 * 
+	 * @param array &$base_array 要素を削除したい配列
+	 * @param int $delete_position 削除を開始する要素位置
+	 * @param int $delete_items 削除する要素数（省略可能。省略時は1つだけ削除）
+	 * @param boolean $reroll_index 削除後の配列の添字振り直しフラグ（省略可能。省略時はtrueで添字を振り直す。※数値添字のみの配列でない場合は振り直しは行わない）
+	 * @return boolean 削除成功時にtrue
+	 **/
+	public function array_delete(&$base_array, $delete_position=null, $delete_items=1, $reroll_index=true) {
+		if (!is_array($base_array)) 
+			return false;
+		if (is_null($delete_position) || !is_integer($delete_position)) 
+			return false;
+		if (!is_integer($delete_items) || intval($delete_items) == 0) 
+			return false;
+		$index_num = 0;
+		foreach ($base_array as $key => $value) {
+			if ($delete_position == $index_num) {
+				unset($base_array[$key]);
+				$delete_items--;
+				$delete_position++;
+			}
+			if ($delete_items == 0) {
+				break;
+			}
+			$index_num++;
+		}
+		$is_key_numric = true;
+		foreach (array_keys($base_array) as $key_value) {
+			if (!is_integer($key_value)) {
+				$is_key_numric = false;
+				break;
+			}
+		}
+		if ($is_key_numric && $reroll_index) {
+			$base_array = array_merge($base_array, array());
+		}
+		return true;
+	}
+	
 	
 }

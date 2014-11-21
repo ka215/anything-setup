@@ -5,11 +5,11 @@ jQuery(document).ready(function($){
 		return event.which !== 13;
 	});
 	
-	// リストモードのアクションハンドラ
+	// submitボタンのアクションハンドラ
 	$('input[name="submit"]').on('click', function(e){
 		var parse_id = $(this).attr('id').split('-');
-		var action = parse_id[1];
-		var option_name = $(this).attr('data-option-name');
+		var action = typeof parse_id[1] != 'undefined' ? parse_id[1] : parse_id[0];
+		var option_name = typeof $(this).attr('data-option-name') != 'undefined' ? $(this).attr('data-option-name') : $('#atsu-admin-form').children('input[name="option_name"]').val();
 		if (action == 'edit') {
 			e.preventDefault();
 			location.href += '&mode=configure&optnm='+option_name+'#atsu-cie-head';
@@ -309,11 +309,12 @@ jQuery(document).ready(function($){
 	
 	// preset regx handler
 	// after php output, jquery append is good (non ajax)
-	$('[for="validate_regx"]').parent().append('<div class="preset_regx"><select name="preset_regx" id="preset_regx"><option value=""> Presets </option></select></div>');
-	var regx_offset = $('#validate_regx').position().top, regx_width = $('#validate_regx').width();
-	$('.preset_regx').css({ top: regx_offset-2+'px', left: 280+'px' }).show();
-	var regx_preset = {};
-	
+	if ($(document).find('#validate_regx').length != 0) {
+		$('[for="validate_regx"]').parent().append('<div class="preset_regx"><select name="preset_regx" id="preset_regx"><option value=""> Presets </option></select></div>');
+		var regx_offset = $('#validate_regx').position(), regx_width = $('#validate_regx').width();
+		$('.preset_regx').css({ top: regx_offset.top-2+'px', left: 280+'px' }).show();
+		var regx_preset = {};
+	}
 	
 	
 	// helper text for tooltip
