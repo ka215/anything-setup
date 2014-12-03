@@ -73,6 +73,8 @@ class AnythingSetUpper {
 			}
 		}
 		
+		AnythingSetUpper_Ajax::instance();
+		
 		add_filter('plugin_action_links', array($this, 'add_action_links'), 10, 2);
 		add_action('admin_menu', array($this, 'create_admin'));
 	}
@@ -205,7 +207,7 @@ class AnythingSetUpper {
 //					'jquery-ui-widget' => null, 
 //					'jquery-ui-mouse' => null, 
 //					'jquery-ui-position' => null, 
-//					'jquery-ui-sortable' => null, 
+					'jquery-ui-sortable' => null, 
 //					'jquery-ui-autocomplete' => null, 
 //					'jquery-ui-tooltip' => null, 
 					'atsu-admin-script' => array( $this->dir_url . '/assets/atsu-script.js', array(), null, false ), 

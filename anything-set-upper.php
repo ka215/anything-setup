@@ -21,6 +21,7 @@ define('ATSU_PLUGIN_LIB_DIR', ATSU_PLUGIN_DIR . ATSU_DS . 'lib');
 //define('ATSU_PLUGIN_TMPL_DIR', ATSU_PLUGIN_DIR . ATSU_DS . 'templates');
 
 require_once ATSU_PLUGIN_LIB_DIR . ATSU_DS . 'atsu.class.php';
+require_once ATSU_PLUGIN_LIB_DIR . ATSU_DS . 'atsu.ajax.php';
 require_once ATSU_PLUGIN_DIR . ATSU_DS . 'functions.php';
 
 global $atsu;

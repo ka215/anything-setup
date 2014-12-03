@@ -61,8 +61,32 @@ th {
 .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>th, .table>caption+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>td, .table>thead:first-child>tr:first-child>td {
 	border-top: 0;
 }
+.table-nobordered>thead>tr>th, .table-nobordered>tbody>tr>th, .table-nobordered>tfoot>tr>th, .table-nobordered>thead>tr>td, .table-nobordered>tbody>tr>td, .table-nobordered>tfoot>tr>td {
+	border-top: 0!important;
+	border: none!important;
+}
+.table-nobordered th, .table-nobordered td {
+	background-color: transparent;
+}
 .table-hover tr:hover {
 	background-color: #eee;
+}
+
+.ctrl-edit, .ctrl-delete {
+	width: 54px;
+	line-height: 100%;
+	vertical-align: middle;
+}
+
+#sortable tr {
+	cursor: move;
+}
+
+.sortable-helper {
+	min-height: 60px;
+	border: 2px dashed #e8e8e8;
+	background-color: transparent;
+	border-radius: 3px;
 }
 
 .configure-items {
