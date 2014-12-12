@@ -137,7 +137,8 @@ class AnythingSetUpperAdminOptions {
 					$vsp_content = "<table id=\"sortable\" class=\"table table-nobordered table-hover\">\n";
 					$order_index = 1;
 					foreach ($current_options as $option_name => $schema) {
-						$base_tr = $this->render_component_form_element($option_name, $schema, $options_values, 'table');
+##var_dump($schema);
+						$base_tr = $this->render_component_form_element($option_name, $schema, $options_values, 'table', 'vsp');
 						$add_ctrl = '<td class="ctrl-edit"><button id="atsu-edit_item-iconbtn-'. $option_name .'" class="button button-default button-small" data-option-item="'. $option_name .'" data-order-index="'. $order_index .'"><span class="dashicons dashicons-edit"></span></td>';
 						$add_ctrl .= '<td class="ctrl-delete"><button id="atsu-delete_item-iconbtn-'. $option_name .'" class="button button-default button-small" data-option-item="'. $option_name .'" data-order-index="'. $order_index .'"><span class="dashicons dashicons-no-alt"></span></button></td>';
 						$vsp_content .= sprintf(str_replace('</tr>', '%s</tr>', $base_tr), $add_ctrl);
@@ -206,7 +207,7 @@ class AnythingSetUpperAdminOptions {
 		} else {
 			$form_elements_template = "<div>%s <p class=\"helper-text\">%s</p></div>\n";
 		}
-		$post_array_name = 'atsu_setting_options';
+		$post_array_name = $extend == 'vsp' ? 'atsu_setting_options_vps' : 'atsu_setting_options';
 		$component_type = $schema[0];
 		$label_text = $schema[4];
 		$description_text = $schema[5];
@@ -216,6 +217,7 @@ class AnythingSetUpperAdminOptions {
 			$extra =  is_array($schema[7]) ? $schema[7] : array();
 		}
 		$is_require = isset($extra['require']) && !empty($extra['require']) ? $extra['require'] : false;
+#var_dump($is_require);
 		$is_encrypt = isset($extra['encrypt']) && !empty($extra['encrypt']) ? $extra['encrypt'] : false;
 		$field_size = isset($extra['field_size']) && !empty($extra['field_size']) ? intval($extra['field_size']) : null;
 		$cols = isset($extra['cols']) && !empty($extra['cols']) ? intval($extra['cols']) : null;
@@ -398,6 +400,7 @@ class AnythingSetUpperAdminOptions {
 		global $atsu_message;
 		$options_list = $this->plugin_current_options['options'];
 		$set_options = $_POST['atsu_setting_options'];
+##var_dump($set_options);
 		$action = $_POST['action'];
 		$option_name = isset($_POST['option_name']) && !empty($_POST['option_name']) ? $_POST['option_name'] : '';
 		$status = array();
@@ -469,16 +472,7 @@ class AnythingSetUpperAdminOptions {
 					if (array_key_exists($option_name, $options_list)) {
 						if (!array_key_exists($store_options['field_name'], $options_list[$option_name])) {
 							$insert_order = $store_options['field_order'] > 0 ? $store_options['field_order'] : null;
-							$insert_item = array($store_options['field_name'] => array(
-								$store_options['field_type'], 
-								$store_options['default_string_value'], 
-								$store_options['placeholder'], 
-								$store_options['validate_regx'], 
-								$store_options['label'], 
-								$store_options['helper_text'], 
-								$store_options['enable_field'], 
-								array('field_size'=>$store_options['field_size']), 
-							));
+							$insert_item = $this->buildSetOptionsArray($store_options);
 							$this->array_insert($options_list[$option_name], $insert_item, $insert_order);
 							$this->plugin_current_options['options'] = $options_list;
 							update_option(ATSU_PLUGIN_SLUG, $this->plugin_current_options);
@@ -494,8 +488,39 @@ class AnythingSetUpperAdminOptions {
 				}
 				break;
 			case 'update_item': 
+				$error_msg = array();
+				$before_field_name = $set_options['before_field_name'];
+				unset($set_options['before_field_name']);
+				foreach ($set_options as $item_name => $item_value) {
+					list($status, $fixed_value) = $this->validate_option_values($item_name, $item_value);
+					if (empty($status)) {
+						$store_options[$item_name] = $item_name == 'validate_regx' ? stripcslashes($fixed_value) : $fixed_value;
+					} else {
+						$error_msg[] = $status;
+					}
+				}
 				
-				
+				// save or error
+				if (empty($error_msg)) {
+					if (array_key_exists($option_name, $options_list)) {
+						if (array_key_exists($before_field_name, $options_list[$option_name])) {
+							$update_order = $store_options['field_order'] > 0 ? $store_options['field_order'] : null;
+							$update_item = $this->buildSetOptionsArray($store_options);
+							$this->array_insert($options_list[$option_name], $update_item, $update_order);
+							if ($before_field_name != $store_options['field_name']) 
+								unset($options_list[$option_name][$before_field_name]);
+							$this->plugin_current_options['options'] = $options_list;
+							update_option(ATSU_PLUGIN_SLUG, $this->plugin_current_options);
+							$atsu_message = [ 'update', __('Updated the option settings.', ATSU_PLUGIN_SLUG) ];
+						} else {
+							$atsu_message = [ 'error', __('The item was not exists.', ATSU_PLUGIN_SLUG) ];
+						}
+					} else {
+						$atsu_message = [ 'error', __('The saving option settings does not exists.', ATSU_PLUGIN_SLUG) ];
+					}
+				} else {
+					$atsu_message = [ 'error', implode("<br>\n", $error_msg) ];
+				}
 				break;
 			case 'edit_item': 
 				// because it is processed in the ajax is not handling here.
@@ -575,6 +600,92 @@ class AnythingSetUpperAdminOptions {
 			}
 		}
 		return array($message, $fixed_value);
+	}
+	
+	public function buildSetOptionsArray($store_options) {
+		if (isset($store_options['extra']) && !empty($store_options['extra'])) {
+			foreach (explode(',', $store_options['extra']) as $enable_value) {
+				${$enable_value} = true;
+			}
+		}
+var_dump($store_options);
+		$extra_options = array();
+		if (isset($encrypt) && $encrypt) 
+			$extra_options['encrypt'] = $encrypt;
+		if (isset($require) && $require) 
+			$extra_options['require'] = $require;
+// option_key	=>	[ 0:TYPE, 1:DEFAULT, 2:PLACEHOLDER|ITEMS_ARRAY, 3:VALIDATE_REGX|IS_MULTI, 4:LABEL, 5:HELPER_TEXT, 6:ENABLE, 7:EXTRA ]
+		$items = array(
+			$store_options['field_type'], 
+			$store_options['default_string_value'], 
+			$store_options['placeholder'], 
+			$store_options['validate_regx'], 
+			$store_options['label'], 
+			$store_options['helper_text'], 
+			$store_options['enable_field'], 
+			array() 
+		);
+		
+		$field_type = explode('_', $store_options['field_type']);
+		if (in_array($field_type[0], array('string', 'password', 'hidden'))) {
+			$extra_options['field_size'] = $store_options['field_size'];
+		}
+		if ($field_type[0] == 'textarea') {
+			if (isset($store_options['cols']) && intval($store_options['cols']) > 0) 
+				$extra_options['cols'] = intval($store_options['cols']);
+			if (isset($store_options['rows']) && intval($store_options['rows']) > 0) 
+				$extra_options['rows'] = intval($store_options['rows']);
+		}
+		if ($field_type[0] == 'integer') {
+			$extra_options['field_size'] = $store_options['field_size'];
+			if (isset($store_options['unit']) && !empty($store_options['unit'])) 
+				$extra_options['unit'] = intval($store_options['unit']);
+		}
+		if ($field_type[0] == 'boolean') {
+			$def_val = (isset($store_options['default_string_value']) && !empty($store_options['default_string_value'])) ? $store_options['default_string_value'] : true;
+			if (strtolower($def_val) == 'false' || strtolower($def_val) == 'no' || strtolower($def_val) == 'off' || intval($def_val) < 1) {
+				$def_val = false;
+			}
+			$items[1] = $def_val;
+			$items[2] = null;
+			$items[3] = null;
+		}
+		if (in_array($field_type[0], array('select', 'radio', 'check'))) {
+			$is_multi = (isset($field_type[1]) && !empty($field_type[1]) && $field_type[1] == 'multi') ? true : false;
+			if ($is_multi) {
+				$def_selected = (isset($store_options['default_string_value']) && !empty($store_options['default_string_value'])) ? explode(',', $store_options['default_string_value']) : array(0);
+				$def_selected = implode(',', $def_selected);
+			} else {
+				$def_selected = (isset($store_options['default_string_value']) && !empty($store_options['default_string_value'])) ? $store_options['default_string_value'] : 0;
+			}
+			$values = explode(',', $store_options['item_value']);
+			$disps = explode(',', $store_options['item_display_name']);
+			if (count($values) != count($disps)) {
+				$len = count(max($values, $disps));
+			} else {
+				$len = count($values);
+			}
+			$items_array = array();
+			for ($i = 0; $i < $len; $i++) {
+				if (isset($values[$i]) && !empty($values[$i])) {
+					if (!array_key_exists($values[$i], $items_array)) {
+						$items_array[$values[$i]] = isset($disps[$i]) ? $disps[$i] : '';
+					} else {
+						$items_array[$values[$i] .'_'. $i] = isset($disps[$i]) ? $disps[$i] : '';
+					}
+				} else {
+					$items_array[$i] = isset($disps[$i]) ? $disps[$i] : '';
+				}
+			}
+			$items[1] = $def_selected;
+			$items[2] = $items_array;
+			$items[3] = $is_multi ? 'multi' : 'single';
+		}
+		if (count($extra_options) > 0) {
+			$items[7] = $extra_options;
+		}
+		$built_array = array( $store_options['field_name'] => $items );
+		return $built_array;
 	}
 	
 	/**

@@ -21,6 +21,9 @@ jQuery(document).ready(function($){
 			if (action == 'add_item') {
 				//$('#atsu-admin-form').action = location.href.replace(/#[A-Za-z0-9\-_]+$/, '#atsu-vsp-head');
 			}
+			if (action == 'update_item') {
+				
+			}
 			if (action == 'update_order') {
 				var options_order = getCurrentOptionOrder(true);
 				for (var i=0, oo_len=options_order.length; i<oo_len; i++) {
@@ -128,9 +131,18 @@ jQuery(document).ready(function($){
 								$(this).removeAttr('selected');
 							}
 						});
-						if (res[7].length > 0) {
+						var extra_elm = $('input[name="atsu_setting_options[extra][]"');
+						extra_elm.removeAttr('checked');
+						if (Object.keys(res[7]).length > 0) {
 							for (var key in res[7]) {
-								$('input#'+ key).val(res[7][key]);
+								if (key == 'require' || key == 'encrypt') {
+									extra_elm.each(function(){
+										if ($(this).val() == key && res[7][key]) 
+											$(this).prop('checked', 'checked');
+									});
+								} else {
+									$('input#'+ key).removeAttr('value data-default').attr('data-default', res[7][key]).val(res[7][key]).prop('valueAsNumber', res[7][key]);
+								}
 							}
 						}
 						if (res['field_order'] > 0) {
