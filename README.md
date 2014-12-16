@@ -1,9 +1,9 @@
-# [Anything Set Upper](http://ka2.org/)
+# [Anything Setup](http://ka2.org/)
 
-Anything setup is a plugin that can add your own settings page for using any themes and plugins in the admin panel of WordPress.
+Anything setup is a plugin that add your own option setting pages in the admin panel of WordPress. In that setting page, you can set up options as like usable to any themes and plugins.
 Since the setting contents is stored in the WordPress options table (wp-options), you can use it to get in get_option() function when needed.
 
-* Release version source: [http://wordpress.org/plugins/anything-set-upper/](http://downloads.wordpress.org/plugin/anything-set-upper.0.1.0.zip)
+* Release version source: [http://wordpress.org/plugins/anything-setup/](http://downloads.wordpress.org/plugin/anything-setup.0.1.0.zip)
 * Home Page: [http://ka2.org/](http://ka2.org/)
 * Twitter: [@ka2bowy](https://twitter.com/ka2bowy)
 * Forum: [support forum](http://ka2.org/)
@@ -11,13 +11,13 @@ Since the setting contents is stored in the WordPress options table (wp-options)
 
 ## Installation
 
-Install after downloaded from WordPress administrator's panel or [download here](https://github.com/ka215/anything-set-upper) and put the plugins directory.
+Install after downloaded from WordPress administrator's panel or [download here](https://github.com/ka215/anything-setup) and put the plugins directory.
 
 How to install WordPress provisions are as follows.
 
 1. Upload `anything-set-upper` directory to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Navigate to the Custom DB Tables submenu in setting menu
+3. Navigate to the Anything Setup submenu in setting menu
 
 That's it. Now you can easily start setting any options.
 
