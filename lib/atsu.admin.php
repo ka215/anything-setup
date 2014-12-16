@@ -1,5 +1,5 @@
 <?php
-class AnythingSetUpperAdminOptions {
+class AnythingSetupAdminOptions {
 	
 	var $plugin_info;
 	
@@ -13,7 +13,7 @@ class AnythingSetUpperAdminOptions {
 		if (isset(self::$instance)) 
 			return self::$instance;
 		
-		self::$instance = new AnythingSetUpperAdminOptions;
+		self::$instance = new AnythingSetupAdminOptions;
 		self::$instance->init();
 		return self::$instance;
 	}
@@ -473,7 +473,7 @@ class AnythingSetUpperAdminOptions {
 						if (!array_key_exists($store_options['field_name'], $options_list[$option_name])) {
 							$insert_order = $store_options['field_order'] > 0 ? $store_options['field_order'] : null;
 							$insert_item = $this->buildSetOptionsArray($store_options);
-							$this->array_insert($options_list[$option_name], $insert_item, $insert_order);
+							atsu_array_insert($options_list[$option_name], $insert_item, $insert_order);
 							$this->plugin_current_options['options'] = $options_list;
 							update_option(ATSU_PLUGIN_SLUG, $this->plugin_current_options);
 							$atsu_message = [ 'update', __('Added the option settings.', ATSU_PLUGIN_SLUG) ];
@@ -506,7 +506,7 @@ class AnythingSetUpperAdminOptions {
 						if (array_key_exists($before_field_name, $options_list[$option_name])) {
 							$update_order = $store_options['field_order'] > 0 ? $store_options['field_order'] : null;
 							$update_item = $this->buildSetOptionsArray($store_options);
-							$this->array_insert($options_list[$option_name], $update_item, $update_order);
+							atsu_array_insert($options_list[$option_name], $update_item, $update_order);
 							if ($before_field_name != $store_options['field_name']) 
 								unset($options_list[$option_name][$before_field_name]);
 							$this->plugin_current_options['options'] = $options_list;
@@ -687,93 +687,5 @@ var_dump($store_options);
 		$built_array = array( $store_options['field_name'] => $items );
 		return $built_array;
 	}
-	
-	/**
-	 * 配列（連想配列にも対応）の指定位置に要素（配列にも対応）を挿入して、挿入後の配列を返す
-	 * 
-	 * @param array &$base_array 挿入したい配列
-	 * @param mixed $insert_value 挿入する値（文字列、数値、配列のいずれか）
-	 * @param int $position 挿入位置（省略可能。先頭は0、省略時は配列末尾に挿入される）
-	 * @return boolean 挿入成功時にtrue
-	 **/
-	public function array_insert(&$base_array, $insert_value, $position=null) {
-		if (!is_array($base_array)) 
-			return false;
-		$position = is_null($position) ? count($base_array) : intval($position);
-		$base_keys = array_keys($base_array);
-		$base_values = array_values($base_array);
-		if (is_array($insert_value)) {
-			$insert_keys = array_keys($insert_value);
-			$insert_values = array_values($insert_value);
-		} else {
-			$insert_keys = array(0);
-			$insert_values = array($insert_value);
-		}
-		$insert_keys_after = array_splice($base_keys, $position);
-		$insert_values_after = array_splice($base_values, $position);
-		foreach ($insert_keys as $insert_keys_value) {
-			array_push($base_keys, $insert_keys_value);
-		}
-		foreach ($insert_values as $insert_values_value) {
-			array_push($base_values, $insert_values_value);
-		}
-		$base_keys = array_merge($base_keys, $insert_keys_after);
-		$is_key_numric = true;
-		foreach ($base_keys as $key_value) {
-			if (!is_integer($key_value)) {
-				$is_key_numric = false;
-				break;
-			}
-		}
-		$base_values = array_merge($base_values, $insert_values_after);
-		if ($is_key_numric) {
-			$base_array = $base_values;
-		} else {
-			$base_array = array_combine($base_keys, $base_values);
-		}
-		return true;
-	}
-	
-	/**
-	 * 配列（連想配列にも対応）の任意の位置から指定数分の要素を削除して、削除後の配列を返す
-	 * 
-	 * @param array &$base_array 要素を削除したい配列
-	 * @param int $delete_position 削除を開始する要素位置
-	 * @param int $delete_items 削除する要素数（省略可能。省略時は1つだけ削除）
-	 * @param boolean $reroll_index 削除後の配列の添字振り直しフラグ（省略可能。省略時はtrueで添字を振り直す。※数値添字のみの配列でない場合は振り直しは行わない）
-	 * @return boolean 削除成功時にtrue
-	 **/
-	public function array_delete(&$base_array, $delete_position=null, $delete_items=1, $reroll_index=true) {
-		if (!is_array($base_array)) 
-			return false;
-		if (is_null($delete_position) || !is_integer($delete_position)) 
-			return false;
-		if (!is_integer($delete_items) || intval($delete_items) == 0) 
-			return false;
-		$index_num = 0;
-		foreach ($base_array as $key => $value) {
-			if ($delete_position == $index_num) {
-				unset($base_array[$key]);
-				$delete_items--;
-				$delete_position++;
-			}
-			if ($delete_items == 0) {
-				break;
-			}
-			$index_num++;
-		}
-		$is_key_numric = true;
-		foreach (array_keys($base_array) as $key_value) {
-			if (!is_integer($key_value)) {
-				$is_key_numric = false;
-				break;
-			}
-		}
-		if ($is_key_numric && $reroll_index) {
-			$base_array = array_merge($base_array, array());
-		}
-		return true;
-	}
-	
 	
 }

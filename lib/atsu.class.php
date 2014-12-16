@@ -1,5 +1,5 @@
 <?php
-class AnythingSetUpper {
+class AnythingSetup {
 	
 	/**
 	 * plugin version
@@ -73,7 +73,7 @@ class AnythingSetUpper {
 			}
 		}
 		
-		AnythingSetUpper_Ajax::instance();
+		AnythingSetup_Ajax::instance();
 		
 		add_filter('plugin_action_links', array($this, 'add_action_links'), 10, 2);
 		add_action('admin_menu', array($this, 'create_admin'));
@@ -83,7 +83,7 @@ class AnythingSetUpper {
 	 * constructor for PHP4
 	 * @return void
 	 */
-	function AnythingSetUpper() {
+	function AnythingSetup() {
 		if (empty($this->options)) 
 			$this->__construct();
 	}
@@ -142,7 +142,7 @@ class AnythingSetUpper {
 		} else {
 			add_option($revision_option, $this->options, '', 'no');
 		}
-		//$this->log_info('Anything Set Upper plugin deactivated.');
+		//$this->log_info('Anything Setup plugin deactivated.');
 	}
 	
 	/**
@@ -150,7 +150,7 @@ class AnythingSetUpper {
 	 * @return array
 	 */
 	function add_action_links($links, $file){
-		if ($file == self::DOMAIN . '/anything-set-upper.php') {
+		if ($file == self::DOMAIN . '/anything-setup.php') {
 			$links[] = '<a href="'. admin_url('options-general.php?page=' . self::DOMAIN) .'">'. __('Settings', self::DOMAIN) .'</a>';
 		}
 		return $links;
@@ -161,7 +161,7 @@ class AnythingSetUpper {
 	 * @return void
 	 */
 	function create_admin(){
-		$atsu_plugin_page = add_options_page(__('Anything Set Upper Option: ', self::DOMAIN), __('Anything Set Upper', self::DOMAIN), 'manage_options', self::DOMAIN, array($this, 'admin_controller'), plugin_dir_url(__FILE__) . 'assets/img/undo.png');
+		$atsu_plugin_page = add_options_page(__('Anything Setup Option: ', self::DOMAIN), __('Anything Setup', self::DOMAIN), 'manage_options', self::DOMAIN, array($this, 'admin_controller'), plugin_dir_url(__FILE__) . 'assets/img/undo.png');
 		wp_parse_str($_SERVER['QUERY_STRING'], $this->query);
 		add_action("admin_head-$atsu_plugin_page", array($this, 'admin_header'));
 		add_action("admin_enqueue_scripts", array($this, 'admin_assets'));
@@ -176,7 +176,7 @@ class AnythingSetUpper {
 	function admin_controller(){
 		require_once ATSU_PLUGIN_LIB_DIR . ATSU_DS . 'atsu.admin.php';
 		
-		AnythingSetUpperAdminOptions::instance();
+		AnythingSetupAdminOptions::instance();
 	}
 	
 		/**
@@ -232,7 +232,7 @@ class AnythingSetUpper {
 	}
 	
 	/**
-	 * load footer for Anything Set Upper setting options in admin panel
+	 * load footer for Anything Setup setting options in admin panel
 	 * @return void
 	 */
 	function admin_footer(){
@@ -242,7 +242,7 @@ class AnythingSetUpper {
 	}
 	
 	/**
-	 * show notice on Anything Set Upper setting options in admin panel
+	 * show notice on Anything Setup setting options in admin panel
 	 * @return void
 	 */
 	function admin_notice(){

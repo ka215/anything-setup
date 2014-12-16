@@ -1,5 +1,5 @@
 <?php
-class AnythingSetUpper_Ajax {
+class AnythingSetup_Ajax {
 	
 	private static $instance;
 	
@@ -7,7 +7,7 @@ class AnythingSetUpper_Ajax {
 		if (isset(self::$instance)) 
 			return self::$instance;
 		
-		self::$instance = new AnythingSetUpper_Ajax;
+		self::$instance = new AnythingSetup_Ajax;
 		self::$instance->init();
 		return self::$instance;
 	}
