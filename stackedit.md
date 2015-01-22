@@ -1,147 +1,178 @@
-Welcome to StackEdit!	{#welcome}
+ようこそ StackEdit へ!	{#welcome}
 =====================
 
 
-Hello, I am your first Markdown document within **StackEdit**[^stackedit]. Don't delete me, I can be helpful. I can be recovered anyway in the `Utils` tab of the <i class="icon-cog"></i> `Settings` dialog.
+こんにちは、**StackEdit**[^stackedit]内の最初のマークダウン・ドキュメントです。役立つ情報が記載されているので削除しないでください。もし削除した場合でも、<i class="icon-cog"></i>`Settings`ダイアログの`Utils`タブから再度取得できます。
 
 ----------
 
 
-Documents
+ドキュメント {#document}
 ---------
 
-**StackEdit** stores your documents in your browser, which means all your documents are automatically saved locally and are accessible **offline!**
+**StackEdit** ではお使いのブラウザで作成されるすべてのドキュメントを自動的にローカルに保存し、**オフライン**でのアクセスを可能にしています！
 
-> **NOTE:**
+> **注意:**
 > 
-> - StackEdit is accessible offline after the application has been loaded for the first time.
-> - Your local documents are not shared between different browsers or computers.
-> - Clearing your browser's data may **delete all your local documents!** Make sure your documents are backed up using **Google Drive** or **Dropbox** synchronization (see [<i class="icon-share"></i> Synchronization](#synchronization) section).
+> - StackEditは最初にロードされた後もオフラインで利用可能なアプリケーションです。
+> - あなたのローカルドキュメントは別のブラウザまたはコンピュータ間では共有されません。
+> - お使いのブラウザのデータを消去すると、 **すべてのローカルドキュメントが削除されてしまいます！** あなたの文書が **Google Drive** または **Dropbox** に同期（ [<i class="icon-share"></i> 同期](#synchronization) の項を参照）してバックアップされていることを確認してください。
 
-#### <i class="icon-file"></i> Create a document
+#### <i class="icon-file"></i> ドキュメントの作成
 
-You can create a new document by clicking the <i class="icon-file"></i> button in the navigation bar. It will switch from the current document to the new one.
+ドキュメントパネルには、ナビゲーションバーの <i class="icon-folder-open"></i> ボタンを使用してアクセスできます。ドキュメントパネルで <i class="icon-file"></i> **New document** をクリックして新しい文書を作成することができます。
 
-#### <i class="icon-folder-open"></i> Switch to another document
+#### <i class="icon-folder-open"></i> ドキュメントの切り替え
 
-You can list all your local documents and switch from one to another by clicking the <i class="icon-folder-open"></i> button in the navigation bar.
+すべてのローカルドキュメントは、ドキュメントパネルに一覧表示されます。リスト内のドキュメントをクリックするか、<KBD> Ctrl + [ </ KBD> および <KBD> Ctrl + ] </ KBD> を使用してドキュメントの切り替えを行うことができます。
 
-#### <i class="icon-pencil"></i> Rename a document
+#### <i class="icon-pencil"></i> ドキュメント名の変更
 
-You can rename the current document by clicking the document title in the navigation bar.
+ナビゲーションバーでドキュメントのタイトルをクリックすると、現在のドキュメントの名前を変更することができます。
 
-#### <i class="icon-trash"></i> Delete a document
+#### <i class="icon-trash"></i> ドキュメントの削除
 
-You can delete the current document by clicking the <i class="icon-trash"></i> button in the navigation bar.
+ドキュメントパネルの <i class="icon-trash"></i> **Delete document** をクリックすることで現在のドキュメントを削除することができます。
 
-#### <i class="icon-hdd"></i> Save a document
+#### <i class="icon-hdd"></i> ドキュメントのエクスポート
 
-You can save the current document to a file using the <i class="icon-hdd"></i> `Save as...` sub-menu from the <i class="icon-provider-stackedit"></i> menu.
+<i class="icon-provider-stackedit"></i> メニューから <i class="icon-hdd"></i> **Export to disk** をクリックすることで現在のドキュメントをファイルとして保存することができます。
 
-> **Tip:** See [<i class="icon-share"></i> Publish a document](#publish-a-document) section for a description of the different output formats.
-
+> **ヒント:** ファイルの出力形式の詳細については、 [<i class="icon-upload"></i> ドキュメントの公開](#publish-a-document) の項を参照してください。
 
 ----------
 
 
-Synchronization
+同期 {#synchronization}
 ---------------
 
-**StackEdit** can be combined with **Google Drive** and **Dropbox** to have your documents centralized in the *Cloud*. The synchronization mechanism will take care of uploading your modifications or downloading the latest version of your documents.
+**StackEdit** では **Google Drive** や **Dropbox** と同期することで、 クラウド上にあなたのドキュメントを保存しておくことができます。これにより、ドキュメントの変更をアップロードしたり、最新バージョンをダウンロードすることが簡単に実現できます。
 
-> **NOTE:**
+> **注意:**
 > 
-> - Full access to **Google Drive** or **Dropbox** is required to be able to import any document in StackEdit.
-> - Imported documents are downloaded in your browser and are not transmitted to a server.
-> - If you experience problems exporting documents to Google Drive, check and optionally disable browser extensions, such as Disconnect.
+> - StackEdit内の任意のドキュメントをインポートするためには、 **Google Drive** または **Dropbox** へのフルアクセスが必要です。
+> - インポートされたドキュメントは、お使いのブラウザにダウンロードされ、サーバーへ送信されません。
+> - Google Drive に文書をエクスポートする際に問題が発生する場合、ブラウザ拡張機能をチェックして、必要に応じては無効化したり接続解除したりしてください。
 
-#### <i class="icon-download"></i> Import a document
+#### <i class="icon-refresh"></i> ドキュメントを開く
 
-You can import a document from the *Cloud* by going to the <i class="icon-provider-gdrive"></i> `Google Drive` or the <i class="icon-provider-dropbox"></i> `Dropbox` sub-menu and by clicking `Import from...`. Once imported, your document will be automatically synchronized with the **Google Drive** / **Dropbox** file.
+<i class="icon-provider-gdrive"></i> `Google Drive` または <i class="icon-provider-dropbox"></i> `Dropbox` のサブメニューに行くことによって、およびインポートすると、文書が自動的に **Google Drive** / **Dropbox** のファイルと同期されます `Import from...` をクリックすることにより、クラウド上から文書をインポートすることができます。
+<i class="icon-refresh"></i> **Synchronize** のサブメニュー <i class="icon-provider-gdrive"></i> **Google Drive** か <i class="icon-provider-dropbox"></i> **Dropbox** の **Open from...** をクリックすることでドキュメントを開くことができます。開いた後、ドキュメント内のすべての変更が自動的にあなたの **Google Drive** / **Dropbox** アカウントのファイルと同期されます。
 
-#### <i class="icon-upload"></i> Export a document
+#### <i class="icon-refresh"></i> ドキュメントの保存
 
-You can export any document by going to the <i class="icon-provider-gdrive"></i> `Google Drive` or the <i class="icon-provider-dropbox"></i> `Dropbox` sub-menu and by clicking `Export to...`. Even if your document is already synchronized with **Google Drive** or **Dropbox**, you can export it to a another location. **StackEdit** can synchronize one document with multiple locations.
+<i class="icon-refresh"></i> **Synchronize** のサブメニュー **Save on...** をクリックすると任意のドキュメントを保存できます。もしドキュメントがすでに **Google Drive** や **Dropbox** と同期している場合でも、別の場所にエクスポートすることができます。 StackEditでは複数の場所、複数のアカウントが持つ1つのドキュメントを同期させることができます。
 
-> **Tip:** Using **Google Drive**, you can create collaborative documents to work in real time with other users. Just check the box `Create a real time collaborative document` in the dialog options when exporting to Google Drive.
+#### <i class="icon-refresh"></i> ドキュメントの同期
 
-#### <i class="icon-refresh"></i> Synchronize a document
+ドキュメントが <i class="icon-provider-gdrive"></i> **Google Drive** または <i class="icon-provider-dropbox"></i> **Dropbox** のファイルにリンクされると、StackEditは定期的（3分ごと）にダウンロードされ / すべての変更をアップロードすることで同期を行います。必要に応じて、マージが実行され、競合が検出されます。
 
-Once your document is linked to a **Google Drive** or a **Dropbox** file, **StackEdit** will periodically (every 3 minutes) synchronize it by downloading/uploading any modification. Any conflict will be detected, and a local copy of your document will be created as a backup if necessary.
+ドキュメントを変更し、同期を強制したい場合は、ナビゲーションバーの <i class="icon-refresh"></i> ボタンをクリックしてください。
 
-If you just have modified your document and you want to force the synchronization, click the <i class="icon-refresh"></i> button in the navigation bar.
+> **注意:** 同期するドキュメントがない場合、 <i class="icon-refresh"></i> ボタンは無効化されています。
 
-> **NOTE:** The <i class="icon-refresh"></i> button is disabled when you have no document to synchronize.
+#### <i class="icon-refresh"></i> ドキュメント同期の管理
 
-#### <i class="icon-refresh"></i> Manage document synchronization
+<i class="icon-refresh"></i> **Synchronize** のサブメニュー <i class="icon-refresh"></i> **Manage synchronization** をクリックすると、複数の場所で同期されている1つのドキュメントを管理することができます。ここでは、あなたのドキュメントに関連づけられている同期の場所を削除できます。
 
-Since one document can be synchronized with multiple locations, you can list and manage synchronized locations by clicking <i class="icon-refresh"></i> `Manage synchronization` in the <i class="icon-provider-stackedit"></i> menu. This will open a dialog box allowing you to add or remove synchronization links that are associated to your document.
-
-> **NOTE:** If you delete the file from **Google Drive** or from **Dropbox**, the document will no longer be synchronized with that location.
-
-----------
-
-
-Publication
------------
-
-Once you are happy with your document, you can publish it on different websites directly from **StackEdit**. As for now, **StackEdit** can publish on **Blogger**, **Dropbox**, **Gist**, **GitHub**, **Google Drive**, **Tumblr**, **WordPress** and on any SSH server.
-
-#### <i class="icon-share"></i> Publish a document
-
-You can publish your document by going to the <i class="icon-share"></i> `Publish on` sub-menu and by choosing a website. In the dialog box, you can choose the publication format:
-
-- Markdown, to publish the Markdown text on a website that can interpret it (**GitHub** for instance),
-- HTML, to publish the document converted into HTML (on a blog for instance),
-- Template, to have a full control of the output.
-
-> **NOTE:** The default template is a simple webpage wrapping your document in HTML format. You can customize it in the `Services` tab of the <i class="icon-cog"></i> `Settings` dialog.
-
-#### <i class="icon-share"></i> Update a publication
-
-After publishing, **StackEdit** will keep your document linked to that publish location so that you can update it easily. Once you have modified your document and you want to update your publication, click on the <i class="icon-share"></i> button in the navigation bar.
-
-> **NOTE:** The <i class="icon-share"></i> button is disabled when the document has not been published yet.
-
-#### <i class="icon-share"></i> Manage document publication
-
-Since one document can be published on multiple locations, you can list and manage publish locations by clicking <i class="icon-share"></i> `Manage publication` in the <i class="icon-provider-stackedit"></i> menu. This will open a dialog box allowing you to remove publication links that are associated to your document.
-
-> **NOTE:** In some cases, if the file has been removed from the website or the blog, the document will no longer be published on that location.
+> **注意:** もし **Google Drive** や **Dropbox** からファイルを削除すると、そのドキュメントとの同期は解除されます。
 
 ----------
 
 
-Markdown Extra
---------------
+公開
+-------------
 
-**StackEdit** supports **Markdown Extra**, which extends **Markdown** syntax with some nice features.
+ドキュメントを校了した後、あなたは StackEdit とは異なるウェブサイト上に直接それを公開することができます。現時点での StackEdit は **Blogger** 、 **Dropbox** 、 **Gist** 、 **GitHub** 、 **Google Drive** 、 **Tumblr** 、 **WordPress** 、そして任意のSSHサーバに公開することができます。
 
-> **Tip:** You can disable any **Markdown Extra** feature in the `Extensions` tab of the <i class="icon-cog"></i> `Settings` dialog.
+#### <i class="icon-upload"></i> ドキュメントの公開 {#publish-a-document}
+
+<i class="icon-upload"></i> **Publish** のサブメニューを開きウェブサイトを選択することでドキュメントを公開することができます。ダイアログボックスで選択可能な公開形式は以下の通りです。
+
+- Markdown : （例えば **GitHub** のような）それを解釈することができるウェブサイト上へマークダウン・テキストを公開する
+- HTML : （例えばブログなどに）HTMLに変換した文書を公開する
+- Template : 出力を自由に制御できます
+
+> **注意:** デフォルトテンプレートはHTML形式でドキュメントが包まれたシンプルなウェブページです。テンプレートは <i class="icon-cog"></i> **Settings** ダイアログの **Advanced** タブでカスタマイズすることができます。
+
+#### <i class="icon-upload"></i> 公開後の更新
+
+公開した後、StackEdit は公開ドキュメントにリンクされ、ドキュメントの状態が維持されるため、容易にドキュメントを更新することができます。あなたがドキュメントを変更し、公開ドキュメントを更新したい場合、ナビゲーションバーの <i class="icon-upload"></i> ボタンをクリックします。
+
+> **注意:** <i class="icon-upload"></i> ボタンはドキュメントがまだ公開されていない場合は無効になっています。
+
+#### <i class="icon-upload"></i> ドキュメント公開管理
+
+1つのドキュメントが複数の場所に公開することができるため、<i class="icon-provider-stackedit"></i> メニューパネル内の <i class="icon-upload"></i> **Manage publication** をクリックすることで、その公開場所を管理することができます。ここでは、ドキュメントに関連づけられている公開場所を削除できます。
+
+> **注意:** ファイルがウェブサイトやブログから削除されている場合、ドキュメントをその場所に公開することができなくなります。
+
+----------
 
 
-### Tables
+マークダウン・エクストラ
+--------------------
 
-**Markdown Extra** has a special syntax for tables:
+StackEdit は **Markdown Extra** をサポートし、いくつかの素晴らしい機能が **Markdown** 構文に追加されています。
 
-Item      | Value
---------- | -----
-Computer  | 1600 USD
-Phone     | 12 USD
-Pipe      | 1 USD
+> **ヒント:**  <i class="icon-cog"></i> **Settings** ダイアログボックスの **Extensions** タブ内で任意の **Markdown Extra** 機能を無効にできます。
 
-You can specify column alignment with one or two colons:
-
-| Item      |    Value | Qty  |
-| :-------- | --------:| :--: |
-| Computer  | 1600 USD |  5   |
-| Phone     |   12 USD |  12  |
-| Pipe      |    1 USD | 234  |
+> **注意:** **Markdown構文** の詳細は [こちら][2] を参照。 **Markdown Extra** に関する詳細は [こちら][3] です。
 
 
-### Definition Lists
+### テーブル
 
-**Markdown Extra** has a special syntax for definition lists too:
+**Markdown Extra** によるテーブル（作表）のための構文は次のとおりです。
+
+```
+Item     | Value
+-------- | ---
+Computer | $1600
+Phone    | $12
+Pipe     | $1
+```
+
+Item     | Value
+-------- | ---
+Computer | $1600
+Phone    | $12
+Pipe     | $1
+
+コロンを使うことでセル内の文字寄せができます。
+
+```
+| Item     | Value | Qty   |
+| :------- | ----: | :---: |
+| Computer | $1600 |  5    |
+| Phone    | $12   |  12   |
+| Pipe     | $1    |  234  |
+```
+
+| Item     | Value | Qty   |
+| :------- | ----: | :---: |
+| Computer | $1600 |  5    |
+| Phone    | $12   |  12   |
+| Pipe     | $1    |  234  |
+
+
+### 定義リスト
+
+**Markdown Extra** による定義リストのための構文は次のとおりです。
+
+```
+Term 1
+Term 2
+:   Definition A
+:   Definition B
+
+Term 3
+
+:   Definition C
+
+:   Definition D
+
+	> part of definition D
+```
 
 Term 1
 Term 2
@@ -157,19 +188,32 @@ Term 3
 	> part of definition D
 
 
-### Fenced code blocks
+### フェンス付コードブロック
 
-GitHub's fenced code blocks[^gfm] are also supported with **Prettify** syntax highlighting:
+GitHubのフェンスで囲まれたコードブロックも **Highlight.js** 構文強調表示でサポートされています。
 
 ```
 // Foo
 var bar = 0;
 ```
 
-> **Tip:** To use **Highlight.js** instead of **Prettify**, just configure the `Markdown Extra` extension in the <i class="icon-cog"></i> `Settings` dialog.
+> **ヒント:** **Prettify** の代わりに **Highlight.js** を使用するには、 <i class="icon-cog"></i> **Settings** ダイアログで **Markdown Extra** 拡張機能にチェックします。
+
+> **注意:** 詳しい情報は下記参照 :
+
+> - **Prettify** 構文のついて [詳細][5]
+> - **Highlight.js** 構文について [詳細][6]
 
 
-### Footnotes
+### 脚注
+
+Wikipediaなどでおなじみの参考リンクを脚注にページ内リンクとして集約記述する構文です。
+
+```
+You can create footnotes like this[^footnote].
+
+  [^footnote]: Here is the *text* of the **footnote**.
+```
 
 You can create footnotes like this[^footnote].
 
@@ -178,56 +222,83 @@ You can create footnotes like this[^footnote].
 
 ### SmartyPants
 
-SmartyPants converts ASCII punctuation characters into "smart" typographic punctuation HTML entities. For example:
+SmartyPantsは、「スマート」タイポグラフィック句読文字のHTMLエンティティにアスキー句読文字に変換します。例えば：
 
-|                  | ASCII                                    | HTML                                |
- ------------------|------------------------------------------|-------------------------------------
-| Single backticks | `'Isn't this fun?'`                      | &#8216;Isn&#8217;t this fun?&#8217; |
-| Quotes           | `"Isn't this fun?"`                      | &#8220;Isn&#8217;t this fun?&#8221; |
-| Dashes           | `-- is an en-dash and --- is an em-dash` | &#8211; is an en-dash and &#8212; is an em-dash |
+|                  | ASCII                        | HTML              |
+ ----------------- | ---------------------------- | ------------------
+| Single backticks | `'Isn't this fun?'`            | 'Isn't this fun?' |
+| Quotes           | `"Isn't this fun?"`            | "Isn't this fun?" |
+| Dashes           | `-- is en-dash, --- is em-dash` | &ndash; is en-dash, &mdash; is em-dash |
 
 
-### Table of contents
+### 目次（Table of contents）
 
-You can insert a table of contents using the marker `[TOC]`:
+マーカー `[TOC]` を使用して目次を挿入することができます。
 
 [TOC]
 
 
-### Comments
+### 数式（MathJax）
 
-Usually, comments in Markdown are just standard HTML comments. <!-- like this -->
-**StackEdit** extends HTML comments in order to produce useful, highlighted comments in the preview but not in your exported documents. <!--- This is very useful for collecting feedback in a collaborative document. -->
+あなたは [math.stackexchange.com][1] のように、 **MathJax** を使用して *LaTeX* の数式をレンダリングすることができます。
 
+```
+The *Gamma function* satisfying $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$ is via the Euler integral
 
-### MathJax
- 
-You can render *LaTeX* mathematical expressions using **MathJax**, as on [math.stackexchange.com][1]:
+$$
+\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,.
+$$
+```
 
-The *Gamma function* satisfying $\Gamma(n) = (n-1)!\quad\forall
-n\in\mathbb N$ is via the Euler integral
+The *Gamma function* satisfying $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$ is via the Euler integral
 
 $$
 \Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\,.
 $$
 
-> **Tip:** Make sure you include MathJax into your publications to render mathematical expression correctly. Your page/template should include something like: 
+
+> **ヒント:** 数式があなたのウェブサイト上で正しくレンダリングされるようにするには、テンプレートに **MathJax** をインクルードしなければなりません。
 
 ```
-<script type="text/javascript" src="https://stackedit.io/libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 ```
 
-> **NOTE:** You can find more information:
->
-> - about **Markdown** syntax [here][2],
-> - about **Markdown Extra** extension [here][3],
-> - about **LaTeX** mathematical expressions [here][4],
-> - about **Prettify** syntax highlighting [here][5],
-> - about **Highlight.js** syntax highlighting [here][6].
+> **注意:** **LaTeX** 数式に関する詳細な情報は [こちら][4] を参照してください。
 
-  [^stackedit]: [StackEdit](https://stackedit.io/) is a full-featured, open-source Markdown editor based on PageDown, the Markdown library used by Stack Overflow and the other Stack Exchange sites.
 
-  [^gfm]: **GitHub Flavored Markdown** (GFM) is supported by StackEdit.
+### UML 図式
+
+下記のようなシーケンス図を描画することができます。
+
+```sequence
+Alice->Bob: Hello Bob, how are you?
+Note right of Bob: Bob thinks
+Bob-->Alice: I am good thanks!
+```
+
+フローチャートも描画できます。
+
+```flow
+st=>start: Start
+e=>end
+op=>operation: My Operation
+cond=>condition: Yes or No?
+
+st->op->cond
+cond(yes)->e
+cond(no)->op
+```
+
+> **注意:** 詳細情報の参照先:
+
+> - **Sequence diagrams** 構文について [詳細][7],
+> - about **Flow charts** 構文について [詳細][8].
+
+### Support StackEdit
+
+[![](https://cdn.monetizejs.com/resources/button-32.png)](https://monetizejs.com/authorize?client_id=ESTHdCYOi18iLhhO&summary=true)
+
+  [^stackedit]: [StackEdit](https://stackedit.io/) は、Stack Overflow や他のスタック交換サイトで使用されるマークダウン・ライブラリと、PageDownをベースとしたフル機能のオープンソース・マークダウン・エディタです。 ↩
 
 
   [1]: http://math.stackexchange.com/
@@ -235,4 +306,7 @@ $$
   [3]: https://github.com/jmcmanus/pagedown-extra "Pagedown Extra"
   [4]: http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference
   [5]: https://code.google.com/p/google-code-prettify/
+  [6]: http://highlightjs.org/
+  [7]: http://bramp.github.io/js-sequence-diagrams/
+  [8]: http://adrai.github.io/flowchart.js/
   [6]: http://highlightjs.org/
